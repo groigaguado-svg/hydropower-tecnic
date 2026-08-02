@@ -118,13 +118,32 @@
     var links = Array.prototype.slice.call(nav.querySelectorAll(".navbar__link"));
     if (!links.length) return;
 
+    // En páginas que no son la home, algunos enlaces apuntan a anclas de otra
+    // página (p. ej. "index.html#contacto"); eso no es un selector CSS válido
+    // y document.querySelector lanzaría una excepción que abortaría toda la
+    // función. Los tratamos como "sin sección propia" en vez de romper la
+    // burbuja entera.
     var sections = links.map(function (link) {
       var id = link.getAttribute("href");
-      return id && id.length > 1 ? document.querySelector(id) : null;
+      if (!id || id.charAt(0) !== "#" || id.length < 2) return null;
+      try {
+        return document.querySelector(id);
+      } catch (err) {
+        return null;
+      }
     });
 
     var currentLink = null;
     var hoverActive = false;
+
+    // Si ninguna sección de la propia página coincide con el scroll (p. ej. en
+    // catalogo.html, que no tiene las secciones de la home), respetamos el
+    // enlace marcado como "is-current" en el propio HTML para que la burbuja
+    // arranque igualmente sobre él.
+    var preset = links.filter(function (link) {
+      return link.classList.contains("is-current");
+    })[0];
+    if (preset) currentLink = preset;
 
     function setCurrent(link) {
       if (currentLink === link) return;
@@ -183,6 +202,22 @@
     });
 
     updateSpy();
+
+    // El ancho/posición del enlace depende de la tipografía Inter cargada vía
+    // Google Fonts: en la carga inicial el texto aún mide con la fuente de
+    // sistema, así que la burbuja queda mal encajada hasta el primer scroll.
+    // Recalculamos en cuanto las fuentes y el resto de recursos terminan de
+    // cargar para que arranque ya centrada.
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () {
+        hoverActive = false;
+        updateSpy();
+      });
+    }
+    window.addEventListener("load", function () {
+      hoverActive = false;
+      updateSpy();
+    });
   }
 
   /* -------------------------------------------------------------------- */
@@ -251,6 +286,165 @@
     btn.addEventListener("click", function () {
       window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
     });
+  }
+
+  /* -------------------------------------------------------------------- */
+  /* Mapa de Google: usa la Maps Embed API oficial si hay API key         */
+  /* configurada (data-maps-api-key en #mapEmbed); si no, se mantiene el  */
+  /* iframe de solo-dirección ya presente en el HTML como alternativa sin */
+  /* clave. La API oficial evita el error de "esta página no puede       */
+  /* cargar Google Maps" que da el truco de embeber la búsqueda a pelo.   */
+  /* -------------------------------------------------------------------- */
+  function initGoogleMap() {
+    var wrap = document.getElementById("mapEmbed");
+    if (!wrap) return;
+
+    var apiKey = wrap.getAttribute("data-maps-api-key");
+    var address = wrap.getAttribute("data-address");
+    if (!apiKey || !address) return;
+
+    var iframe = wrap.querySelector("iframe");
+    if (!iframe) return;
+    iframe.src = "https://www.google.com/maps/embed/v1/place?key=" + encodeURIComponent(apiKey) + "&q=" + encodeURIComponent(address);
+  }
+
+  /* -------------------------------------------------------------------- */
+  /* Carrusel de imágenes del catálogo: autoplay hacia la derecha en      */
+  /* bucle infinito + flechas manuales. Todo el movimiento se calcula a   */
+  /* mano con requestAnimationFrame sobre una única variable "offset" en  */
+  /* vez de mezclar una animación CSS con transform por JS: son dos       */
+  /* dueños distintos de la misma propiedad y el que pierde deja de       */
+  /* pintarse, que es la causa típica de que estos carruseles se rompan.  */
+  /* -------------------------------------------------------------------- */
+  function initCatalogCarousels() {
+    var roots = document.querySelectorAll(".catalog-carousel");
+    if (!roots.length) return;
+
+    roots.forEach(function (root) {
+      var track = root.querySelector(".catalog-carousel__track");
+      var prevBtn = root.querySelector(".catalog-carousel__arrow--prev");
+      var nextBtn = root.querySelector(".catalog-carousel__arrow--next");
+      if (!track) return;
+
+      // El track contiene el set de imágenes duplicado x2 (la copia con
+      // aria-hidden) para poder recolocar el offset sin que se note el salto.
+      var setWidth = 0;
+
+      function measure() {
+        setWidth = track.scrollWidth / 2;
+      }
+
+      function apply() {
+        if (!setWidth) return;
+        track.style.transform = "translateX(" + (offset - setWidth) + "px)";
+      }
+
+      var offset = 0;
+      var speed = 0.45;
+      var hovering = false;
+      var paused = false;
+      var resumeTimer = null;
+      var rafId = null;
+
+      function wrap(value) {
+        if (setWidth <= 0) return 0;
+        value = value % setWidth;
+        if (value < 0) value += setWidth;
+        return value;
+      }
+
+      function tick() {
+        if (!paused && setWidth > 0) {
+          offset = wrap(offset + speed);
+          apply();
+        }
+        rafId = requestAnimationFrame(tick);
+      }
+
+      function nudge(direction) {
+        if (setWidth <= 0) return;
+        var step = Math.min(320, setWidth / 2);
+        offset = wrap(offset + direction * step);
+        apply();
+        paused = true;
+        clearTimeout(resumeTimer);
+        resumeTimer = setTimeout(function () {
+          if (!hovering) paused = false;
+        }, 2600);
+      }
+
+      measure();
+      apply();
+
+      if (prevBtn) {
+        prevBtn.addEventListener("click", function () { nudge(-1); });
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener("click", function () { nudge(1); });
+      }
+
+      root.addEventListener("mouseenter", function () {
+        hovering = true;
+        paused = true;
+      });
+      root.addEventListener("mouseleave", function () {
+        hovering = false;
+        paused = false;
+      });
+
+      window.addEventListener("resize", function () {
+        measure();
+        // Con "movimiento reducido" no hay un rAF corriendo que recoja el
+        // nuevo setWidth por sí solo, así que hay que repintar aquí.
+        apply();
+      });
+      window.addEventListener("load", function () {
+        measure();
+        apply();
+      });
+
+      if (!prefersReducedMotion) {
+        rafId = requestAnimationFrame(tick);
+      }
+    });
+  }
+
+  /* -------------------------------------------------------------------- */
+  /* Reseñas de Google: puntuación en vivo vía Places API (New)          */
+  /* Requiere un Place ID y una API key restringida al dominio en los    */
+  /* atributos data-place-id / data-api-key del elemento #googleRating.  */
+  /* Sin esas credenciales, la tarjeta se queda oculta en vez de mostrar */
+  /* datos inventados.                                                   */
+  /* -------------------------------------------------------------------- */
+  function initGoogleReviews() {
+    var card = document.getElementById("googleRating");
+    if (!card) return;
+
+    var placeId = card.getAttribute("data-place-id");
+    var apiKey = card.getAttribute("data-api-key");
+    if (!placeId || !apiKey) return;
+
+    fetch("https://places.googleapis.com/v1/places/" + placeId + "?fields=rating,userRatingCount", {
+      headers: { "X-Goog-Api-Key": apiKey }
+    })
+      .then(function (res) {
+        if (!res.ok) return Promise.reject(new Error("HTTP " + res.status));
+        return res.json();
+      })
+      .then(function (data) {
+        if (!data || !data.rating) return;
+        var full = Math.max(0, Math.min(5, Math.round(data.rating)));
+        var starsEl = document.getElementById("googleRatingStars");
+        var scoreEl = document.getElementById("googleRatingScore");
+        var countEl = document.getElementById("googleRatingCount");
+        if (starsEl) starsEl.textContent = "★★★★★".slice(0, full) + "☆☆☆☆☆".slice(0, 5 - full);
+        if (scoreEl) scoreEl.textContent = data.rating.toFixed(1);
+        if (countEl) countEl.textContent = "(" + (data.userRatingCount || 0) + " reseñas)";
+        card.hidden = false;
+      })
+      .catch(function (err) {
+        console.error("[HydropowerTecnic] No se pudo cargar la puntuación de Google:", err);
+      });
   }
 
   /* -------------------------------------------------------------------- */
@@ -402,7 +596,7 @@
   }
 
   /* -------------------------------------------------------------------- */
-  /* Formulario de contacto: validación + envío simulado + localStorage   */
+  /* Formulario de contacto: validación + envío a /api/lead              */
   /* -------------------------------------------------------------------- */
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -474,32 +668,42 @@
 
       var data = {
         nombre: form.nombre.value.trim(),
-        email: form.email.value.trim(),
         empresa: form.empresa.value.trim(),
-        tipo: form.tipo.value,
-        mensaje: form.mensaje.value.trim(),
+        email: form.email.value.trim(),
+        web: form.web.value.trim(),
         presupuesto: form.presupuesto.value,
-        fecha: new Date().toISOString()
+        mensaje: form.mensaje.value.trim()
       };
 
-      // Envío simulado (demo sin backend real).
-      window.setTimeout(function () {
-        try {
-          var key = "hydropowertecnic_presupuestos";
-          var existing = JSON.parse(window.localStorage.getItem(key) || "[]");
-          existing.push(data);
-          window.localStorage.setItem(key, JSON.stringify(existing));
-        } catch (err) {
-          console.warn("[HydropowerTecnic] No se pudo guardar en localStorage:", err);
-        }
-
-        submitBtn.disabled = false;
-        submitBtn.classList.remove("btn--loading");
-        showStatus("success", "¡Gracias, " + data.nombre.split(" ")[0] + "! Hemos recibido tu solicitud y te responderemos en menos de 24 horas.");
-        launchConfetti(submitBtn);
-        form.reset();
-        if (mensajeCount) mensajeCount.textContent = "0";
-      }, 900);
+      fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+        signal: AbortSignal.timeout(15000)
+      })
+        .then(function (res) {
+          return res.json().then(function (json) {
+            return { ok: res.ok, json: json };
+          });
+        })
+        .then(function (result) {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove("btn--loading");
+          if (result.ok && result.json && result.json.success) {
+            showStatus("success", "¡Gracias, " + data.nombre.split(" ")[0] + "! Hemos recibido tu solicitud y te responderemos en menos de 24 horas.");
+            launchConfetti(submitBtn);
+            form.reset();
+            if (mensajeCount) mensajeCount.textContent = "0";
+          } else {
+            showStatus("error", "No hemos podido enviar tu solicitud. Inténtalo de nuevo o llámanos directamente.");
+          }
+        })
+        .catch(function (err) {
+          console.error("[HydropowerTecnic] Error al enviar el formulario:", err);
+          submitBtn.disabled = false;
+          submitBtn.classList.remove("btn--loading");
+          showStatus("error", "No hemos podido enviar tu solicitud. Inténtalo de nuevo o llámanos directamente.");
+        });
     });
   }
 
@@ -632,6 +836,9 @@
     safe(initCardTilt, "initCardTilt");
     safe(initDock, "initDock");
     safe(initBackToTop, "initBackToTop");
+    safe(initCatalogCarousels, "initCatalogCarousels");
+    safe(initGoogleMap, "initGoogleMap");
+    safe(initGoogleReviews, "initGoogleReviews");
     safe(initHeroSwipe, "initHeroSwipe");
     safe(initHeroParallax, "initHeroParallax");
     safe(initReveal, "initReveal");

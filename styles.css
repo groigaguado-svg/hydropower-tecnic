@@ -465,9 +465,8 @@ textarea:focus-visible {
 .navbar__toggle-bar {
   width: 22px;
   height: 2px;
-  background: var(--color-primary);
   border-radius: 2px;
-  transition: transform var(--transition-fast), opacity var(--transition-fast);
+  transition: transform var(--transition-fast), opacity var(--transition-fast), background-color var(--transition-fast);
 }
 
 .navbar__toggle[aria-expanded="true"] .navbar__toggle-bar:nth-child(1) {
@@ -631,7 +630,7 @@ textarea:focus-visible {
 /* Indicador de "desliza" — se desvanece al hacer scroll */
 .hero__swipe {
   position: absolute;
-  right: var(--size-xl);
+  left: 50%;
   bottom: var(--size-xl);
   z-index: 1;
   display: flex;
@@ -639,12 +638,13 @@ textarea:focus-visible {
   align-items: center;
   gap: 8px;
   opacity: 1;
+  transform: translateX(-50%);
   transition: opacity 0.4s ease, transform 0.4s ease;
 }
 
 .hero__swipe.is-hidden {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateX(-50%) translateY(8px);
   pointer-events: none;
 }
 
@@ -1980,13 +1980,6 @@ textarea:focus-visible {
   width: auto;
 }
 
-.footer__brand-name {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: var(--size-lg);
-  margin-bottom: 0;
-}
-
 .footer__cookie-link {
   font-size: 14px;
   color: rgba(255, 255, 255, 0.8);
@@ -2167,6 +2160,273 @@ textarea:focus-visible {
 }
 
 /* ==========================================================================
+   PÁGINA CATÁLOGO
+   ========================================================================== */
+
+.catalog-nav-wrap {
+  padding-top: var(--size-2xl);
+}
+
+.catalog-block {
+  padding: var(--size-4xl) 0;
+}
+
+.catalog-block:nth-child(even) {
+  background: var(--color-light);
+}
+
+.catalog-block__inner {
+  display: flex;
+  align-items: center;
+  gap: var(--size-3xl);
+}
+
+.catalog-block__media,
+.catalog-block__content {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.catalog-block--reverse .catalog-block__inner {
+  flex-direction: row-reverse;
+}
+
+.catalog-block__media {
+  display: flex;
+  align-items: center;
+}
+
+.catalog-block__title {
+  font-size: clamp(24px, 3vw, 32px);
+  color: var(--color-primary);
+  margin: var(--size-sm) 0 var(--size-base);
+}
+
+.catalog-block__text {
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+  margin-bottom: var(--size-lg);
+}
+
+.catalog-block__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin-bottom: var(--size-xl);
+}
+
+.catalog-block__chips li {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: rgba(30, 58, 138, 0.08);
+  border: 1px solid rgba(30, 58, 138, 0.15);
+  padding: 5px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   UBICACIÓN Y RESEÑAS DE GOOGLE
+   ========================================================================== */
+
+.ubicacion {
+  padding: var(--size-4xl) 0;
+  background: var(--color-light);
+}
+
+.ubicacion__map {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  min-height: 420px;
+  background: var(--color-border);
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.ubicacion__map iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  border: 0;
+  display: block;
+}
+
+.reviews-card {
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: var(--size-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-base);
+  box-shadow: var(--shadow-sm);
+}
+
+.reviews-card__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reviews-card__brand svg {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.reviews-card__brand span {
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.reviews-card__rating {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reviews-card__stars {
+  color: #FBBC04;
+  font-size: 20px;
+  letter-spacing: 2px;
+}
+
+.reviews-card__score {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.reviews-card__count {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.reviews-card__text {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.reviews-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.reviews-card__actions .btn {
+  min-height: 44px;
+  padding: 0 20px;
+  font-size: 14px;
+}
+
+/* Variante horizontal, usada como cabecera de prueba social en Casos de Uso */
+.reviews-card--inline {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--size-lg);
+  margin-bottom: var(--size-2xl);
+}
+
+.reviews-card--inline .reviews-card__brand {
+  flex-shrink: 0;
+}
+
+.reviews-card--inline .reviews-card__rating {
+  flex-shrink: 0;
+}
+
+.reviews-card--inline .reviews-card__text {
+  flex: 1 1 240px;
+  margin: 0;
+}
+
+.reviews-card--inline .reviews-card__actions {
+  margin-top: 0;
+  flex-shrink: 0;
+}
+
+/* ==========================================================================
+   CARRUSEL DE IMÁGENES DEL CATÁLOGO
+   ========================================================================== */
+
+.catalog-carousel {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+}
+
+.catalog-carousel__viewport {
+  overflow: hidden;
+  border-radius: 16px;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+}
+
+.catalog-carousel__track {
+  display: flex;
+  gap: 16px;
+  width: max-content;
+  will-change: transform;
+}
+
+.catalog-carousel__slide {
+  flex: 0 0 auto;
+  width: 280px;
+  height: 200px;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.catalog-carousel__slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.catalog-carousel__arrow {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 2;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.catalog-carousel__arrow svg {
+  width: 20px;
+  height: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+.catalog-carousel__arrow:hover {
+  color: var(--color-primary-dark);
+}
+
+.catalog-carousel__arrow--prev {
+  left: -10px;
+}
+
+.catalog-carousel__arrow--next {
+  right: -10px;
+}
+
+/* ==========================================================================
    RESPONSIVE
    ========================================================================== */
 
@@ -2182,6 +2442,11 @@ textarea:focus-visible {
 
   .specs__grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .catalog-block__inner,
+  .catalog-block--reverse .catalog-block__inner {
+    flex-direction: column;
   }
 }
 
@@ -2282,6 +2547,26 @@ textarea:focus-visible {
     max-width: 420px;
   }
 
+  .catalog-carousel__slide {
+    width: 200px;
+    height: 150px;
+  }
+
+  .catalog-carousel__arrow {
+    width: 38px;
+    height: 38px;
+  }
+
+  .catalog-carousel__arrow svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .reviews-card--inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
   .hero {
     min-height: 100svh;
     align-items: flex-end;
@@ -2367,18 +2652,36 @@ textarea:focus-visible {
   }
 
   .cookie-banner {
-    left: 12px;
-    right: 12px;
-    bottom: 12px;
-    padding: var(--size-lg);
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    padding: var(--size-base) var(--size-lg);
+    border-radius: 18px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--size-base);
+  }
+
+  .cookie-banner__title {
+    font-size: var(--size-base);
+    margin-bottom: 2px;
+  }
+
+  .cookie-banner__text {
+    max-width: none;
+    font-size: 12px;
   }
 
   .cookie-banner__actions {
     width: 100%;
+    flex-direction: column-reverse;
+    gap: 8px;
   }
 
   .cookie-banner__actions .btn {
-    flex: 1;
+    width: 100%;
+    flex: none;
+    min-height: 42px;
   }
 }
 
