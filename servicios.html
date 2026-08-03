@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Servicios de Hydropower Tecnic: equipos hidráulicos, neumáticos, reparaciones y distribución industrial. Más de 850 modelos disponibles.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.hydropowertecnic.es/servicios.html">
+  <meta name="theme-color" content="#1E3A8A">
+  <title>Servicios | Hydropower Tecnic</title>
+  <link rel="icon" href="assets/img/favicon.png" type="image/png" sizes="any">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=20260802-2">
+</head>
+<body>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <filter id="liquid-distort" x="-30%" y="-30%" width="160%" height="160%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.010 0.014" numOctaves="2" seed="7" result="noise"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise" scale="16" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+      <filter id="liquid-distort-soft" x="-30%" y="-30%" width="160%" height="160%">
+        <feTurbulence type="fractalNoise" baseFrequency="0.02 0.03" numOctaves="1" seed="3" result="noise2"/>
+        <feDisplacementMap in="SourceGraphic" in2="noise2" scale="6" xChannelSelector="R" yChannelSelector="G"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="scroll-progress" id="scrollProgress" aria-hidden="true"></div>
+
+  <header class="navbar" id="navbar">
+    <div class="navbar__inner">
+      <a href="index.html" class="navbar__brand">
+        <img src="assets/img/logo-full-white.png" alt="HYDROPOWER TECNIC SL" class="navbar__logo navbar__logo--light">
+        <img src="assets/img/logo-icon-navy.png" alt="HYDROPOWER TECNIC SL" class="navbar__logo navbar__logo--dark">
+        <span class="navbar__brand-name">Hydropower Tecnic</span>
+      </a>
+      <nav class="navbar__nav" id="navbarNav" aria-label="Navegación">
+        <span class="nav-liquid-pill" id="navLiquidPill" aria-hidden="true"></span>
+        <a href="index.html" class="navbar__link">Inicio</a>
+        <a href="servicios.html" class="navbar__link is-current">Servicios</a>
+        <a href="index.html#quienes-somos" class="navbar__link">Empresa</a>
+        <a href="index.html#contacto" class="navbar__link">Contacto</a>
+        <div class="navbar__cta">
+          <a href="index.html#contacto" class="btn btn--primary">Solicitar Presupuesto</a>
+        </div>
+      </nav>
+      <button class="navbar__toggle" id="navbarToggle" aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="navbarNav">
+        <span class="navbar__toggle-bar"></span>
+        <span class="navbar__toggle-bar"></span>
+        <span class="navbar__toggle-bar"></span>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="services-hero">
+      <div class="container">
+        <a href="index.html" class="services-hero__back">← Volver a la web</a>
+        <h1 class="services-hero__title">Servicios para mantener tu producción en marcha</h1>
+        <p class="services-hero__text">Equipamiento hidráulico y neumático, reparación de maquinaria y distribución, con 14 años de experiencia y más de 850 modelos disponibles.</p>
+      </div>
+    </section>
+
+    <nav class="services-nav" aria-label="Categorías de servicios">
+      <div class="container">
+        <ul class="services-nav__list">
+          <li><a href="#hidraulica">Servicios Hidráulicos</a></li>
+          <li><a href="#neumatica">Servicios Neumáticos</a></li>
+          <li><a href="#reparaciones">Reparaciones</a></li>
+          <li><a href="#distribucion">Distribución y Logística</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- ============ SERVICIOS HIDRÁULICOS ============ -->
+    <section class="service-block" id="hidraulica">
+      <div class="service-slideshow" data-slideshow>
+        <div class="service-slideshow__slide is-active"><img src="assets/img/catalogo/hidraulica-1.jfif" alt="Equipo hidráulico industrial"></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/hidraulica-2.jfif" alt=""></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/hidraulica-3.jfif" alt=""></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/hidraulica-4.jfif" alt=""></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/hidraulica-5.jfif" alt=""></div>
+        <div class="service-slideshow__scrim" aria-hidden="true"></div>
+        <div class="service-slideshow__label">
+          <span class="service-slideshow__label-number">01</span>
+          <span class="service-slideshow__label-title">Servicios Hidráulicos</span>
+        </div>
+        <button type="button" class="service-slideshow__arrow service-slideshow__arrow--prev glass-surface" aria-label="Imagen anterior">
+          <span class="glass-sheen"></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="service-slideshow__arrow service-slideshow__arrow--next glass-surface" aria-label="Imagen siguiente">
+          <span class="glass-sheen"></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <div class="service-slideshow__dots">
+          <button type="button" class="is-active" aria-label="Imagen 1"></button>
+          <button type="button" aria-label="Imagen 2"></button>
+          <button type="button" aria-label="Imagen 3"></button>
+          <button type="button" aria-label="Imagen 4"></button>
+          <button type="button" aria-label="Imagen 5"></button>
+        </div>
+      </div>
+      <div class="service-block__content-wrap">
+        <div class="container service-block__content reveal">
+          <span class="service-block__number" aria-hidden="true">01</span>
+          <span class="product-card__count service-block__count">250+ modelos</span>
+          <h2 class="service-block__title">Servicios Hidráulicos</h2>
+          <p class="service-block__text">Bombas, cilindros, válvulas y acumuladores para sistemas de presión industrial. Equipos <strong>ISO 4401</strong> y <strong>CETOP</strong> certificados, compatibles con Bosch Rexroth, Parker y Eaton, con posibilidad de fabricación en aceros especiales según planos del cliente.</p>
+          <ul class="service-block__chips">
+            <li>ISO 4401</li>
+            <li>CETOP</li>
+            <li>280 bar máx.</li>
+            <li>0,5–500 L/min</li>
+            <li>-20° a +70°C</li>
+          </ul>
+          <a href="index.html#contacto" class="btn btn--primary">Solicitar servicio →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SERVICIOS NEUMÁTICOS ============ -->
+    <section class="service-block" id="neumatica">
+      <div class="service-slideshow" data-slideshow>
+        <div class="service-slideshow__slide is-active"><img src="assets/img/catalogo/neumatica-1.jfif" alt="Equipo neumático industrial"></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/neumatica-2.jfif" alt=""></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/neumatica-3.jfif" alt=""></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/neumatica-4.jfif" alt=""></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/neumatica-5.jfif" alt=""></div>
+        <div class="service-slideshow__scrim" aria-hidden="true"></div>
+        <div class="service-slideshow__label">
+          <span class="service-slideshow__label-number">02</span>
+          <span class="service-slideshow__label-title">Servicios Neumáticos</span>
+        </div>
+        <button type="button" class="service-slideshow__arrow service-slideshow__arrow--prev glass-surface" aria-label="Imagen anterior">
+          <span class="glass-sheen"></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="service-slideshow__arrow service-slideshow__arrow--next glass-surface" aria-label="Imagen siguiente">
+          <span class="glass-sheen"></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <div class="service-slideshow__dots">
+          <button type="button" class="is-active" aria-label="Imagen 1"></button>
+          <button type="button" aria-label="Imagen 2"></button>
+          <button type="button" aria-label="Imagen 3"></button>
+          <button type="button" aria-label="Imagen 4"></button>
+          <button type="button" aria-label="Imagen 5"></button>
+        </div>
+      </div>
+      <div class="service-block__content-wrap">
+        <div class="container service-block__content reveal">
+          <span class="service-block__number" aria-hidden="true">02</span>
+          <span class="product-card__count service-block__count">180+ modelos</span>
+          <h2 class="service-block__title">Servicios Neumáticos</h2>
+          <p class="service-block__text">Actuadores, compresores, válvulas neumáticas y herramientas de aire para automatización industrial, con <strong>marcado CE</strong> y compatibilidad con las principales marcas del sector, preparados para un rango de temperatura de -20° a +70°C.</p>
+          <ul class="service-block__chips">
+            <li>Marcado CE</li>
+            <li>CETOP</li>
+            <li>-20° a +70°C</li>
+            <li>Bosch Rexroth · Parker · Eaton</li>
+          </ul>
+          <a href="index.html#contacto" class="btn btn--primary">Solicitar servicio →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ REPARACIONES ============ -->
+    <section class="service-block" id="reparaciones">
+      <div class="service-slideshow" data-slideshow>
+        <div class="service-slideshow__slide is-active"><img src="assets/img/catalogo/reparaciones-1.jfif" alt="Reparación de maquinaria industrial"></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/reparaciones-2.jfif" alt=""></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/reparaciones-3.jfif" alt=""></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/reparaciones-4.jfif" alt=""></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/reparaciones-5.jfif" alt=""></div>
+        <div class="service-slideshow__scrim" aria-hidden="true"></div>
+        <div class="service-slideshow__label">
+          <span class="service-slideshow__label-number">03</span>
+          <span class="service-slideshow__label-title">Reparaciones</span>
+        </div>
+        <button type="button" class="service-slideshow__arrow service-slideshow__arrow--prev glass-surface" aria-label="Imagen anterior">
+          <span class="glass-sheen"></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="service-slideshow__arrow service-slideshow__arrow--next glass-surface" aria-label="Imagen siguiente">
+          <span class="glass-sheen"></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <div class="service-slideshow__dots">
+          <button type="button" class="is-active" aria-label="Imagen 1"></button>
+          <button type="button" aria-label="Imagen 2"></button>
+          <button type="button" aria-label="Imagen 3"></button>
+          <button type="button" aria-label="Imagen 4"></button>
+          <button type="button" aria-label="Imagen 5"></button>
+        </div>
+      </div>
+      <div class="service-block__content-wrap">
+        <div class="container service-block__content reveal">
+          <span class="service-block__number" aria-hidden="true">03</span>
+          <span class="product-card__count service-block__count">Disponible 24/7</span>
+          <h2 class="service-block__title">Reparaciones</h2>
+          <p class="service-block__text">Mantenimiento preventivo, reparación de emergencia y overhaul completo, con laboratorio propio de pruebas y 14 años de experiencia reparando soluciones a medida para cada aplicación industrial.</p>
+          <ul class="service-block__chips">
+            <li>Servicio 24/7</li>
+            <li>Laboratorio propio</li>
+            <li>Fabricación según planos del cliente</li>
+          </ul>
+          <a href="index.html#contacto" class="btn btn--primary">Solicitar servicio →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ DISTRIBUCIÓN Y LOGÍSTICA ============ -->
+    <section class="service-block" id="distribucion">
+      <div class="service-slideshow" data-slideshow>
+        <div class="service-slideshow__slide is-active"><img src="assets/img/catalogo/distribucion-1.jfif" alt="Almacén de distribución y logística"></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/distribucion-2.jfif" alt=""></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/distribucion-3.jfif" alt=""></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/distribucion-4.jfif" alt=""></div>
+        <div class="service-slideshow__slide"><img src="assets/img/catalogo/distribucion-5.jfif" alt=""></div>
+        <div class="service-slideshow__scrim" aria-hidden="true"></div>
+        <div class="service-slideshow__label">
+          <span class="service-slideshow__label-number">04</span>
+          <span class="service-slideshow__label-title">Distribución y Logística</span>
+        </div>
+        <button type="button" class="service-slideshow__arrow service-slideshow__arrow--prev glass-surface" aria-label="Imagen anterior">
+          <span class="glass-sheen"></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button type="button" class="service-slideshow__arrow service-slideshow__arrow--next glass-surface" aria-label="Imagen siguiente">
+          <span class="glass-sheen"></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <div class="service-slideshow__dots">
+          <button type="button" class="is-active" aria-label="Imagen 1"></button>
+          <button type="button" aria-label="Imagen 2"></button>
+          <button type="button" aria-label="Imagen 3"></button>
+          <button type="button" aria-label="Imagen 4"></button>
+          <button type="button" aria-label="Imagen 5"></button>
+        </div>
+      </div>
+      <div class="service-block__content-wrap">
+        <div class="container service-block__content reveal">
+          <span class="service-block__number" aria-hidden="true">04</span>
+          <span class="product-card__count service-block__count">Red de 5 almacenes</span>
+          <h2 class="service-block__title">Distribución y Logística</h2>
+          <p class="service-block__text">Gestión de inventario, distribución nacional y kits personalizados, con entrega en 24-48h a nivel nacional desde nuestra red de almacenes.</p>
+          <ul class="service-block__chips">
+            <li>Red de 5 almacenes</li>
+            <li>Entrega 24-48h</li>
+            <li>Kits personalizados</li>
+          </ul>
+          <a href="index.html#contacto" class="btn btn--primary">Solicitar servicio →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="services-cta">
+      <div class="container">
+        <h2 class="services-cta__title">¿No encuentras lo que necesitas?</h2>
+        <p class="services-cta__text">Cuéntanos qué equipo o problema tienes entre manos y te preparamos una solución a medida en menos de 24 horas.</p>
+        <a href="index.html#contacto" class="btn btn--primary">Solicitar Presupuesto</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__grid">
+        <div>
+          <a href="index.html" class="footer__brand">
+            <img src="assets/img/logo-full-white.png" alt="HYDROPOWER TECNIC SL" class="footer__logo">
+            <span class="footer__brand-name">HYDROPOWER TECNIC SL</span>
+          </a>
+          <p class="footer__tagline">Soluciones hidráulicas y neumáticas de precisión para la industria española.</p>
+        </div>
+        <div class="footer__col">
+          <h4>Servicios</h4>
+          <ul>
+            <li><a href="servicios.html#hidraulica">Hidráulica</a></li>
+            <li><a href="servicios.html#neumatica">Neumática</a></li>
+            <li><a href="servicios.html#reparaciones">Reparación</a></li>
+            <li><a href="servicios.html#distribucion">Distribución</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>Empresa</h4>
+          <ul>
+            <li><a href="index.html#quienes-somos">Sobre nosotros</a></li>
+            <li><a href="index.html#casos-de-uso">Casos de uso</a></li>
+            <li><a href="index.html#ubicacion">Ubicación</a></li>
+            <li><a href="index.html#contacto">Contacto</a></li>
+          </ul>
+        </div>
+        <div class="footer__col">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="aviso-legal.html">Aviso Legal</a></li>
+            <li><a href="politica-privacidad.html">Privacidad</a></li>
+            <li><a href="politica-cookies.html">Cookies</a></li>
+            <li><a href="terminos-condiciones.html">Términos</a></li>
+            <li><button type="button" class="footer__cookie-link" id="footerCookiePrefs">Información de cookies</button></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__bottom">
+        <span>© 2026 HYDROPOWER TECNIC SL. Todos los derechos reservados.</span>
+        <span>CIF: [B00000000 — TODO: confirmar] · Alcalá de Henares, Madrid</span>
+      </div>
+    </div>
+  </footer>
+
+  <div class="dock" id="floatingDock" role="toolbar" aria-label="Acciones rápidas">
+    <a href="tel:+34683636312" class="dock__item glass-surface" data-dock-item aria-label="Llamar ahora">
+      <span class="glass-sheen"></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+      <span class="dock__tooltip">Llamar</span>
+    </a>
+    <a href="https://wa.me/34683636312" class="dock__item glass-surface" data-dock-item target="_blank" rel="noopener noreferrer" aria-label="Escribir por WhatsApp (se abre en una pestaña nueva)">
+      <span class="glass-sheen"></span>
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.47 14.38c-.29-.15-1.73-.85-2-.95-.27-.1-.46-.15-.66.15-.2.29-.76.94-.93 1.14-.17.2-.34.22-.63.07-.29-.15-1.23-.45-2.33-1.44-.86-.77-1.44-1.72-1.61-2.01-.17-.29-.02-.45.13-.6.13-.13.29-.34.44-.51.15-.17.2-.29.29-.49.1-.2.05-.37-.02-.51-.07-.15-.66-1.59-.9-2.18-.24-.57-.48-.5-.66-.51h-.56c-.2 0-.51.07-.78.37-.27.29-1.02 1-1.02 2.43s1.05 2.82 1.19 3.02c.15.2 2.06 3.14 4.99 4.4.7.3 1.24.48 1.66.61.7.22 1.34.19 1.84.12.56-.08 1.73-.71 1.98-1.39.24-.68.24-1.27.17-1.39-.07-.12-.26-.19-.55-.34z"/><path d="M12 2a10 10 0 00-8.6 15.1L2 22l4.99-1.31A10 10 0 1012 2zm0 18.2c-1.66 0-3.28-.44-4.7-1.28l-.34-.2-3.09.81.83-3.02-.22-.31A8.2 8.2 0 1120.2 12 8.2 8.2 0 0112 20.2z"/></svg>
+      <span class="dock__tooltip">WhatsApp</span>
+    </a>
+    <a href="index.html#contacto" class="dock__item dock__item--primary glass-surface" data-dock-item aria-label="Solicitar presupuesto">
+      <span class="glass-sheen"></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2 2 4-4"/></svg>
+      <span class="dock__tooltip">Presupuesto</span>
+    </a>
+  </div>
+
+  <button type="button" class="back-to-top glass-surface" id="backToTop" aria-label="Volver arriba">
+    <span class="glass-sheen"></span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+  </button>
+
+  <div class="cookie-banner" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Aviso de cookies" hidden>
+    <div class="cookie-banner__body">
+      <p class="cookie-banner__title">🍪 Aviso de cookies</p>
+      <p class="cookie-banner__text">Solo utilizamos almacenamiento técnico necesario para el funcionamiento del sitio (recordar que ya has visto este aviso). No usamos cookies de analítica ni de publicidad. Más info en nuestra <a href="politica-cookies.html">Política de Cookies</a>.</p>
+    </div>
+    <div class="cookie-banner__actions">
+      <button type="button" class="btn btn--primary" id="cookieAcceptAll">Entendido</button>
+    </div>
+  </div>
+
+  <div class="cookie-modal" id="cookieModal" hidden>
+    <div class="cookie-modal__backdrop" id="cookieModalBackdrop"></div>
+    <div class="cookie-modal__panel glass-surface" role="dialog" aria-modal="true" aria-labelledby="cookieModalTitle">
+      <span class="glass-sheen"></span>
+      <button type="button" class="cookie-modal__close" id="cookieModalClose" aria-label="Cerrar panel de cookies">✕</button>
+      <img src="assets/img/logo-icon-navy.png" alt="" class="cookie-modal__logo" aria-hidden="true">
+      <h2 id="cookieModalTitle">Información de cookies</h2>
+      <p class="cookie-modal__intro">Este sitio solo utiliza almacenamiento técnico estrictamente necesario para su funcionamiento. No instalamos cookies de analítica ni de publicidad, por lo que no necesitamos pedirte consentimiento para categorías opcionales.</p>
+
+      <div class="cookie-category">
+        <div class="cookie-category__head">
+          <label class="switch">
+            <input type="checkbox" checked disabled aria-label="Necesarias (siempre activas)">
+            <span class="switch__track"><span class="switch__thumb"></span></span>
+          </label>
+          <div>
+            <h3>Necesarias</h3>
+            <p>Imprescindibles para que la web funcione (navegación, seguridad, recordar que ya has visto este aviso). Siempre activas.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="cookie-modal__intro">Si en el futuro incorporamos cookies de analítica o marketing, actualizaremos esta página y te pediremos tu consentimiento antes de activarlas.</p>
+
+      <div class="cookie-modal__actions">
+        <button type="button" class="btn btn--primary" id="cookieModalSave">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="main.js?v=20260802-2" defer></script>
+</body>
+</html>

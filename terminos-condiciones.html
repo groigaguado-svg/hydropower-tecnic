@@ -12,7 +12,7 @@
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260802-1">
+  <link rel="stylesheet" href="styles.css?v=20260802-2">
 </head>
 <body>
 
@@ -40,7 +40,7 @@
       </a>
       <nav class="navbar__nav" id="navbarNav" aria-label="Navegación">
         <a href="index.html" class="navbar__link">Inicio</a>
-        <a href="index.html#catalogo" class="navbar__link">Catálogo</a>
+        <a href="index.html#servicios" class="navbar__link">Servicios</a>
         <a href="index.html#contacto" class="navbar__link">Contacto</a>
         <div class="navbar__cta">
           <a href="index.html#contacto" class="btn btn--primary">Solicitar Presupuesto</a>
@@ -112,12 +112,12 @@
           <p class="footer__tagline">Soluciones hidráulicas y neumáticas de precisión para la industria española.</p>
         </div>
         <div class="footer__col">
-          <h4>Catálogo</h4>
+          <h4>Servicios</h4>
           <ul>
-            <li><a href="index.html#catalogo">Hidráulica</a></li>
-            <li><a href="index.html#catalogo">Neumática</a></li>
-            <li><a href="index.html#catalogo">Reparación</a></li>
-            <li><a href="index.html#catalogo">Distribución</a></li>
+            <li><a href="index.html#servicios">Hidráulica</a></li>
+            <li><a href="index.html#servicios">Neumática</a></li>
+            <li><a href="index.html#servicios">Reparación</a></li>
+            <li><a href="index.html#servicios">Distribución</a></li>
           </ul>
         </div>
         <div class="footer__col">
@@ -136,7 +136,7 @@
             <li><a href="politica-privacidad.html">Privacidad</a></li>
             <li><a href="politica-cookies.html">Cookies</a></li>
             <li><a href="terminos-condiciones.html">Términos</a></li>
-            <li><button type="button" class="footer__cookie-link" id="footerCookiePrefs">Preferencias de cookies</button></li>
+            <li><button type="button" class="footer__cookie-link" id="footerCookiePrefs">Información de cookies</button></li>
           </ul>
         </div>
       </div>
@@ -152,15 +152,13 @@
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
   </button>
 
-  <div class="cookie-banner" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Preferencias de cookies" hidden>
+  <div class="cookie-banner" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Aviso de cookies" hidden>
     <div class="cookie-banner__body">
-      <p class="cookie-banner__title">🍪 Usamos cookies</p>
-      <p class="cookie-banner__text">Utilizamos cookies propias y de terceros para el funcionamiento de la web, analítica y, si lo aceptas, mostrarte contenido más relevante. Puedes aceptarlas todas, rechazar las no esenciales o personalizar tu elección. Más info en nuestra <a href="politica-cookies.html">Política de Cookies</a>.</p>
+      <p class="cookie-banner__title">🍪 Aviso de cookies</p>
+      <p class="cookie-banner__text">Solo utilizamos almacenamiento técnico necesario para el funcionamiento del sitio (recordar que ya has visto este aviso). No usamos cookies de analítica ni de publicidad. Más info en nuestra <a href="politica-cookies.html">Política de Cookies</a>.</p>
     </div>
     <div class="cookie-banner__actions">
-      <button type="button" class="btn btn--outline-dark" id="cookieCustomize">Personalizar</button>
-      <button type="button" class="btn btn--ghost-dark" id="cookieReject">Rechazar</button>
-      <button type="button" class="btn btn--primary" id="cookieAcceptAll">Aceptar todo</button>
+      <button type="button" class="btn btn--primary" id="cookieAcceptAll">Entendido</button>
     </div>
   </div>
 
@@ -170,55 +168,30 @@
       <span class="glass-sheen"></span>
       <button type="button" class="cookie-modal__close" id="cookieModalClose" aria-label="Cerrar panel de cookies">✕</button>
       <img src="assets/img/logo-icon-navy.png" alt="" class="cookie-modal__logo" aria-hidden="true">
-      <h2 id="cookieModalTitle">Preferencias de cookies</h2>
-      <p class="cookie-modal__intro">Elige qué categorías de cookies quieres permitir. Puedes cambiar esta configuración en cualquier momento desde el enlace "Preferencias de cookies" en el pie de página.</p>
+      <h2 id="cookieModalTitle">Información de cookies</h2>
+      <p class="cookie-modal__intro">Este sitio solo utiliza almacenamiento técnico estrictamente necesario para su funcionamiento. No instalamos cookies de analítica ni de publicidad, por lo que no necesitamos pedirte consentimiento para categorías opcionales.</p>
 
       <div class="cookie-category">
         <div class="cookie-category__head">
           <label class="switch">
-            <input type="checkbox" checked disabled aria-label="Cookies necesarias (siempre activas)">
+            <input type="checkbox" checked disabled aria-label="Necesarias (siempre activas)">
             <span class="switch__track"><span class="switch__thumb"></span></span>
           </label>
           <div>
             <h3>Necesarias</h3>
-            <p>Imprescindibles para que la web funcione (navegación, seguridad, recordar tus preferencias de cookies). Siempre activas.</p>
+            <p>Imprescindibles para que la web funcione (navegación, seguridad, recordar que ya has visto este aviso). Siempre activas.</p>
           </div>
         </div>
       </div>
 
-      <div class="cookie-category">
-        <div class="cookie-category__head">
-          <label class="switch">
-            <input type="checkbox" id="cookieAnalytics" aria-label="Cookies analíticas">
-            <span class="switch__track"><span class="switch__thumb"></span></span>
-          </label>
-          <div>
-            <h3>Analíticas</h3>
-            <p>Nos ayudan a entender cómo se usa la web (páginas más visitadas, origen del tráfico) para mejorarla.</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="cookie-category">
-        <div class="cookie-category__head">
-          <label class="switch">
-            <input type="checkbox" id="cookieMarketing" aria-label="Cookies de marketing">
-            <span class="switch__track"><span class="switch__thumb"></span></span>
-          </label>
-          <div>
-            <h3>Marketing / Publicidad</h3>
-            <p>Permiten mostrar publicidad relevante en otras webs según tu interacción con la nuestra.</p>
-          </div>
-        </div>
-      </div>
+      <p class="cookie-modal__intro">Si en el futuro incorporamos cookies de analítica o marketing, actualizaremos esta página y te pediremos tu consentimiento antes de activarlas.</p>
 
       <div class="cookie-modal__actions">
-        <button type="button" class="btn btn--outline-light" id="cookieModalRejectAll">Rechazar todo</button>
-        <button type="button" class="btn btn--primary" id="cookieModalSave">Guardar preferencias</button>
+        <button type="button" class="btn btn--primary" id="cookieModalSave">Cerrar</button>
       </div>
     </div>
   </div>
 
-  <script src="main.js?v=20260802-1" defer></script>
+  <script src="main.js?v=20260802-2" defer></script>
 </body>
 </html>

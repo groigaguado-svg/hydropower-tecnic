@@ -137,7 +137,7 @@
     var hoverActive = false;
 
     // Si ninguna sección de la propia página coincide con el scroll (p. ej. en
-    // catalogo.html, que no tiene las secciones de la home), respetamos el
+    // servicios.html, que no tiene las secciones de la home), respetamos el
     // enlace marcado como "is-current" en el propio HTML para que la burbuja
     // arranque igualmente sobre él.
     var preset = links.filter(function (link) {
@@ -297,115 +297,100 @@
   /* -------------------------------------------------------------------- */
   function initGoogleMap() {
     var wrap = document.getElementById("mapEmbed");
-    if (!wrap) return;
+    var placeholder = document.getElementById("mapPlaceholder");
+    var loadBtn = document.getElementById("mapLoadBtn");
+    if (!wrap || !placeholder || !loadBtn) return;
 
-    var apiKey = wrap.getAttribute("data-maps-api-key");
     var address = wrap.getAttribute("data-address");
-    if (!apiKey || !address) return;
+    if (!address) return;
 
-    var iframe = wrap.querySelector("iframe");
-    if (!iframe) return;
-    iframe.src = "https://www.google.com/maps/embed/v1/place?key=" + encodeURIComponent(apiKey) + "&q=" + encodeURIComponent(address);
+    // El mapa no se carga hasta que el visitante lo pide expresamente: al
+    // insertarlo, Google puede instalar sus propias cookies (fuera de
+    // nuestro control), así que no lo cargamos de antemano sin esa acción.
+    loadBtn.addEventListener("click", function () {
+      var apiKey = wrap.getAttribute("data-maps-api-key");
+      var src = apiKey
+        ? "https://www.google.com/maps/embed/v1/place?key=" + encodeURIComponent(apiKey) + "&q=" + encodeURIComponent(address)
+        : "https://maps.google.com/maps?q=" + encodeURIComponent(address) + "&z=16&output=embed";
+
+      var iframe = document.createElement("iframe");
+      iframe.src = src;
+      iframe.title = "Ubicación de Hydropower Tecnic en el mapa";
+      iframe.loading = "lazy";
+      iframe.referrerPolicy = "no-referrer-when-downgrade";
+      iframe.allowFullscreen = true;
+
+      wrap.innerHTML = "";
+      wrap.appendChild(iframe);
+    });
   }
 
   /* -------------------------------------------------------------------- */
-  /* Carrusel de imágenes del catálogo: autoplay hacia la derecha en      */
-  /* bucle infinito + flechas manuales. Todo el movimiento se calcula a   */
-  /* mano con requestAnimationFrame sobre una única variable "offset" en  */
-  /* vez de mezclar una animación CSS con transform por JS: son dos       */
-  /* dueños distintos de la misma propiedad y el que pierde deja de       */
-  /* pintarse, que es la causa típica de que estos carruseles se rompan.  */
+  /* Slideshow de imágenes de cada servicio: crossfade automático +       */
+  /* flechas y puntos manuales. Cada slide es una capa apilada a la que   */
+  /* solo se le cambia opacity/clase, así que no hay medidas de ancho ni  */
+  /* transforms que puedan desincronizarse: el índice "current" es la     */
+  /* única fuente de verdad y wrap() hace el módulo en ambas direcciones. */
   /* -------------------------------------------------------------------- */
-  function initCatalogCarousels() {
-    var roots = document.querySelectorAll(".catalog-carousel");
+  function initServiceSlideshows() {
+    var roots = document.querySelectorAll("[data-slideshow]");
     if (!roots.length) return;
 
     roots.forEach(function (root) {
-      var track = root.querySelector(".catalog-carousel__track");
-      var prevBtn = root.querySelector(".catalog-carousel__arrow--prev");
-      var nextBtn = root.querySelector(".catalog-carousel__arrow--next");
-      if (!track) return;
+      var slides = Array.prototype.slice.call(root.querySelectorAll(".service-slideshow__slide"));
+      var dots = Array.prototype.slice.call(root.querySelectorAll(".service-slideshow__dots button"));
+      var prevBtn = root.querySelector(".service-slideshow__arrow--prev");
+      var nextBtn = root.querySelector(".service-slideshow__arrow--next");
+      if (slides.length < 2) return;
 
-      // El track contiene el set de imágenes duplicado x2 (la copia con
-      // aria-hidden) para poder recolocar el offset sin que se note el salto.
-      var setWidth = 0;
+      var current = 0;
+      var timer = null;
+      var AUTOPLAY_MS = 4500;
 
-      function measure() {
-        setWidth = track.scrollWidth / 2;
+      function wrap(index) {
+        return ((index % slides.length) + slides.length) % slides.length;
       }
 
-      function apply() {
-        if (!setWidth) return;
-        track.style.transform = "translateX(" + (offset - setWidth) + "px)";
+      function show(index) {
+        index = wrap(index);
+        if (index === current) return;
+        slides[current].classList.remove("is-active");
+        if (dots[current]) dots[current].classList.remove("is-active");
+        current = index;
+        slides[current].classList.add("is-active");
+        if (dots[current]) dots[current].classList.add("is-active");
       }
 
-      var offset = 0;
-      var speed = 0.45;
-      var hovering = false;
-      var paused = false;
-      var resumeTimer = null;
-      var rafId = null;
+      function next() { show(current + 1); }
+      function prev() { show(current - 1); }
 
-      function wrap(value) {
-        if (setWidth <= 0) return 0;
-        value = value % setWidth;
-        if (value < 0) value += setWidth;
-        return value;
-      }
-
-      function tick() {
-        if (!paused && setWidth > 0) {
-          offset = wrap(offset + speed);
-          apply();
+      function stopAutoplay() {
+        if (timer) {
+          window.clearInterval(timer);
+          timer = null;
         }
-        rafId = requestAnimationFrame(tick);
       }
 
-      function nudge(direction) {
-        if (setWidth <= 0) return;
-        var step = Math.min(320, setWidth / 2);
-        offset = wrap(offset + direction * step);
-        apply();
-        paused = true;
-        clearTimeout(resumeTimer);
-        resumeTimer = setTimeout(function () {
-          if (!hovering) paused = false;
-        }, 2600);
+      function startAutoplay() {
+        stopAutoplay();
+        if (prefersReducedMotion) return;
+        timer = window.setInterval(next, AUTOPLAY_MS);
       }
-
-      measure();
-      apply();
 
       if (prevBtn) {
-        prevBtn.addEventListener("click", function () { nudge(-1); });
+        prevBtn.addEventListener("click", function () { prev(); startAutoplay(); });
       }
       if (nextBtn) {
-        nextBtn.addEventListener("click", function () { nudge(1); });
+        nextBtn.addEventListener("click", function () { next(); startAutoplay(); });
       }
-
-      root.addEventListener("mouseenter", function () {
-        hovering = true;
-        paused = true;
-      });
-      root.addEventListener("mouseleave", function () {
-        hovering = false;
-        paused = false;
+      dots.forEach(function (dot, i) {
+        dot.addEventListener("click", function () { show(i); startAutoplay(); });
       });
 
-      window.addEventListener("resize", function () {
-        measure();
-        // Con "movimiento reducido" no hay un rAF corriendo que recoja el
-        // nuevo setWidth por sí solo, así que hay que repintar aquí.
-        apply();
-      });
-      window.addEventListener("load", function () {
-        measure();
-        apply();
-      });
+      root.addEventListener("mouseenter", stopAutoplay);
+      root.addEventListener("mouseleave", startAutoplay);
 
-      if (!prefersReducedMotion) {
-        rafId = requestAnimationFrame(tick);
-      }
+      startAutoplay();
     });
   }
 
@@ -603,13 +588,17 @@
   function validateField(field) {
     var wrapper = field.closest(".form-field");
     if (!wrapper) return true;
-    var value = (field.value || "").trim();
     var valid = true;
 
-    if (field.hasAttribute("required") && !value) {
-      valid = false;
-    } else if (field.type === "email" && value && !EMAIL_RE.test(value)) {
-      valid = false;
+    if (field.type === "checkbox") {
+      if (field.hasAttribute("required") && !field.checked) valid = false;
+    } else {
+      var value = (field.value || "").trim();
+      if (field.hasAttribute("required") && !value) {
+        valid = false;
+      } else if (field.type === "email" && value && !EMAIL_RE.test(value)) {
+        valid = false;
+      }
     }
 
     wrapper.classList.toggle("has-error", !valid);
@@ -736,14 +725,9 @@
     var dock = document.getElementById("floatingDock");
     var backToTop = document.getElementById("backToTop");
     var acceptAllBtn = document.getElementById("cookieAcceptAll");
-    var rejectBtn = document.getElementById("cookieReject");
-    var customizeBtn = document.getElementById("cookieCustomize");
     var modalBackdrop = document.getElementById("cookieModalBackdrop");
     var modalClose = document.getElementById("cookieModalClose");
     var modalSave = document.getElementById("cookieModalSave");
-    var modalRejectAll = document.getElementById("cookieModalRejectAll");
-    var analyticsToggle = document.getElementById("cookieAnalytics");
-    var marketingToggle = document.getElementById("cookieMarketing");
     var footerLink = document.getElementById("footerCookiePrefs");
 
     function setRaised(isRaised) {
@@ -770,9 +754,6 @@
     }
 
     function openModal() {
-      var consent = getCookieConsent();
-      analyticsToggle.checked = !!(consent && consent.analytics);
-      marketingToggle.checked = !!(consent && consent.marketing);
       modal.hidden = false;
       document.body.style.overflow = "hidden";
     }
@@ -782,39 +763,24 @@
       document.body.style.overflow = "";
     }
 
-    function applyConsent(consent) {
-      saveCookieConsent(
-        Object.assign({ necessary: true, timestamp: new Date().toISOString() }, consent)
-      );
+    // El sitio solo usa almacenamiento técnico necesario (ninguna cookie de
+    // analítica ni de marketing), así que no hay categorías opcionales que
+    // aceptar/rechazar: un único gesto de "entendido" basta para registrar
+    // que el aviso ya se ha mostrado.
+    function acknowledge() {
+      saveCookieConsent({ necessary: true, timestamp: new Date().toISOString() });
       hideBanner();
       closeModal();
     }
 
-    acceptAllBtn.addEventListener("click", function () {
-      applyConsent({ analytics: true, marketing: true });
-    });
-
-    rejectBtn.addEventListener("click", function () {
-      applyConsent({ analytics: false, marketing: false });
-    });
-
-    customizeBtn.addEventListener("click", openModal);
+    acceptAllBtn.addEventListener("click", acknowledge);
     footerLink.addEventListener("click", openModal);
 
     var inlineOpenBtn = document.getElementById("cookiePolicyOpenModal");
     if (inlineOpenBtn) inlineOpenBtn.addEventListener("click", openModal);
     modalClose.addEventListener("click", closeModal);
     modalBackdrop.addEventListener("click", closeModal);
-
-    modalRejectAll.addEventListener("click", function () {
-      analyticsToggle.checked = false;
-      marketingToggle.checked = false;
-      applyConsent({ analytics: false, marketing: false });
-    });
-
-    modalSave.addEventListener("click", function () {
-      applyConsent({ analytics: analyticsToggle.checked, marketing: marketingToggle.checked });
-    });
+    modalSave.addEventListener("click", acknowledge);
 
     window.addEventListener("keydown", function (e) {
       if (e.key === "Escape" && !modal.hidden) closeModal();
@@ -836,7 +802,7 @@
     safe(initCardTilt, "initCardTilt");
     safe(initDock, "initDock");
     safe(initBackToTop, "initBackToTop");
-    safe(initCatalogCarousels, "initCatalogCarousels");
+    safe(initServiceSlideshows, "initServiceSlideshows");
     safe(initGoogleMap, "initGoogleMap");
     safe(initGoogleReviews, "initGoogleReviews");
     safe(initHeroSwipe, "initHeroSwipe");
