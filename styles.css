@@ -2386,6 +2386,12 @@ textarea:focus-visible {
   z-index: 1;
 }
 
+/* Insignia decorativa de escritorio (ver media query más abajo); oculta
+   por defecto para no alterar la composición móvil. */
+.service-block__index {
+  display: none;
+}
+
 .service-block__title {
   position: relative;
   z-index: 1;
@@ -2723,6 +2729,111 @@ textarea:focus-visible {
 .service-slideshow__dots button.is-active {
   width: 22px;
   background: var(--color-white);
+}
+
+/* ==========================================================================
+   SERVICIOS — COMPOSICIÓN DE ESCRITORIO
+   Solo por encima del breakpoint móvil (1041px): imagen contenida en
+   tarjeta junto al texto, en vez del banner a sangre completa que se ve
+   agobiante en pantallas grandes. En móvil no se toca nada de esto.
+   ========================================================================== */
+
+@media (min-width: 1041px) {
+  .service-block {
+    display: flex;
+    align-items: stretch;
+    gap: var(--size-3xl);
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: var(--size-3xl) var(--size-xl);
+  }
+
+  .service-block--reverse {
+    flex-direction: row-reverse;
+  }
+
+  .service-slideshow {
+    flex: 0 0 44%;
+    height: auto;
+    min-height: 440px;
+    border-radius: 24px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .service-slideshow__scrim {
+    background: linear-gradient(0deg, rgba(15, 23, 42, 0.35) 0%, transparent 35%);
+  }
+
+  .service-slideshow__label {
+    display: none;
+  }
+
+  .service-block__content-wrap {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    background: transparent;
+    padding: 0;
+  }
+
+  .service-block__content-wrap .container {
+    max-width: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .service-block__content {
+    max-width: none;
+  }
+
+  .service-block__index {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    vertical-align: middle;
+    width: 56px;
+    height: 56px;
+    margin-bottom: var(--size-lg);
+    margin-right: 12px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--color-primary), #4f7cff);
+    color: var(--color-white);
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 20px;
+    box-shadow: var(--shadow-md);
+    animation: serviceIndexFloat 4s ease-in-out infinite;
+    transition: transform var(--transition-normal), border-radius var(--transition-normal);
+  }
+
+  .service-block__count {
+    vertical-align: middle;
+  }
+
+  .service-block:hover .service-block__index {
+    transform: rotate(-8deg) scale(1.08);
+    border-radius: 50%;
+  }
+
+  .service-block__title {
+    font-size: clamp(32px, 3.2vw, 42px);
+  }
+
+  .service-block__text {
+    font-size: 17px;
+    line-height: 1.75;
+  }
+
+  .service-block__chips li {
+    font-size: 13px;
+    padding: 7px 14px;
+  }
+}
+
+@keyframes serviceIndexFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
 /* ==========================================================================
