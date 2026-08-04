@@ -2962,6 +2962,10 @@ textarea:focus-visible {
     padding: 0 var(--size-lg);
   }
 
+  .testimonios {
+    padding-top: 80px;
+  }
+
   .specs__grid {
     grid-template-columns: 1fr;
     max-width: 420px;
