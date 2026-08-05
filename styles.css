@@ -523,6 +523,8 @@ textarea:focus-visible {
 }
 
 .hero__copy {
+  display: flex;
+  flex-direction: column;
   max-width: 640px;
 }
 
@@ -544,7 +546,7 @@ textarea:focus-visible {
   font-family: var(--font-heading);
   font-weight: 700;
   text-transform: uppercase;
-  font-size: clamp(42px, 7.5vw, 92px);
+  font-size: clamp(38px, 6.2vw, 74px);
   line-height: 0.96;
   letter-spacing: -1px;
   margin-bottom: var(--size-xl);
@@ -613,14 +615,13 @@ textarea:focus-visible {
 }
 
 .hero__partner-badge {
-  position: absolute;
-  top: calc(var(--navbar-height) + var(--size-2xl));
-  right: var(--size-xl);
-  z-index: 1;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: 14px;
-  padding: 14px 20px;
+  width: fit-content;
+  margin-top: var(--size-lg);
+  margin-bottom: var(--size-lg);
+  padding: 12px 20px;
   border-radius: var(--radius-card);
   border: 1px solid rgba(255, 255, 255, 0.16);
   background: rgba(255, 255, 255, 0.05);
@@ -641,7 +642,7 @@ textarea:focus-visible {
   line-height: 1.35;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.8);
-  max-width: 130px;
+  white-space: nowrap;
 }
 
 .hero__meta {
@@ -756,7 +757,11 @@ textarea:focus-visible {
 }
 
 .marquee--logos {
-  padding: 22px 0;
+  padding: 30px 0;
+}
+
+.marquee--logos .marquee__track {
+  animation-duration: 140s;
 }
 
 .marquee__logo {
@@ -769,7 +774,7 @@ textarea:focus-visible {
 }
 
 .marquee__logo img {
-  height: 24px;
+  height: 44px;
   width: auto;
   display: block;
 }
@@ -2949,11 +2954,9 @@ textarea:focus-visible {
   }
 
   .hero__partner-badge {
-    position: static;
-    margin-top: var(--size-lg);
+    order: 99;
     padding: 10px 16px;
     gap: 10px;
-    width: fit-content;
   }
 
   .hero__partner-badge-logo {
@@ -2962,7 +2965,6 @@ textarea:focus-visible {
 
   .hero__partner-badge-text {
     font-size: 10px;
-    max-width: 100px;
   }
 }
 
@@ -3289,6 +3291,10 @@ textarea:focus-visible {
 
   .marquee__track {
     animation-duration: 90s !important;
+  }
+
+  .marquee--logos .marquee__track {
+    animation-duration: 450s !important;
   }
 
   [data-parallax] {
