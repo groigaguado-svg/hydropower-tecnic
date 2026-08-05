@@ -2954,7 +2954,6 @@ textarea:focus-visible {
   }
 
   .hero__partner-badge {
-    order: 99;
     padding: 10px 16px;
     gap: 10px;
   }
