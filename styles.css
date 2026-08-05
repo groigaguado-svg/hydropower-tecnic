@@ -612,6 +612,38 @@ textarea:focus-visible {
   color: rgba(255, 255, 255, 0.5);
 }
 
+.hero__partner-badge {
+  position: absolute;
+  top: calc(var(--navbar-height) + var(--size-2xl));
+  right: var(--size-xl);
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 20px;
+  border-radius: var(--radius-card);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.hero__partner-badge-logo {
+  height: 26px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.hero__partner-badge-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1.35;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 130px;
+}
+
 .hero__meta {
   position: absolute;
   left: 0;
@@ -721,6 +753,45 @@ textarea:focus-visible {
 
 .marquee:hover .marquee__track {
   animation-play-state: paused;
+}
+
+.marquee--logos {
+  padding: 22px 0;
+}
+
+.marquee__logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--size-2xl);
+  opacity: 0.7;
+  transition: opacity var(--transition-normal);
+}
+
+.marquee__logo img {
+  height: 24px;
+  width: auto;
+  display: block;
+}
+
+.marquee--logos:hover .marquee__logo {
+  opacity: 0.7;
+}
+
+.marquee__logo:hover {
+  opacity: 1;
+}
+
+.marquee--static {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: normal;
+}
+
+.marquee--static .marquee__track {
+  animation: none;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 /* ==========================================================================
@@ -943,6 +1014,14 @@ textarea:focus-visible {
   padding: 4px 10px;
   border-radius: 999px;
   white-space: nowrap;
+}
+
+.product-card__badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
 }
 
 .product-card__text {
@@ -2868,6 +2947,23 @@ textarea:focus-visible {
   .catalog-block--reverse .catalog-block__inner {
     flex-direction: column;
   }
+
+  .hero__partner-badge {
+    position: static;
+    margin-top: var(--size-lg);
+    padding: 10px 16px;
+    gap: 10px;
+    width: fit-content;
+  }
+
+  .hero__partner-badge-logo {
+    height: 20px;
+  }
+
+  .hero__partner-badge-text {
+    font-size: 10px;
+    max-width: 100px;
+  }
 }
 
 @media (max-width: 1040px) {
@@ -2964,6 +3060,10 @@ textarea:focus-visible {
 
   .testimonios {
     padding-top: 80px;
+  }
+
+  .hero__partner-badge {
+    padding: 10px 14px;
   }
 
   .specs__grid {
