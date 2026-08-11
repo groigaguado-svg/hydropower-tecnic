@@ -3019,6 +3019,21 @@ textarea:focus-visible {
     display: flex;
   }
 
+  /* Fix: en WebKit/Chrome móvil, un ancestro position:fixed con
+     backdrop-filter (.navbar.is-scrolled) puede repintarse en el sitio
+     correcto pero dejar de recibir hit-tests de touch hasta el siguiente
+     repintado. Forzamos el navbar a su propia capa de composición para
+     que el botón de menú siga respondiendo al tacto tras hacer scroll. */
+  .navbar {
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    will-change: transform;
+  }
+
+  .navbar__toggle {
+    touch-action: manipulation;
+  }
+
   .pilares__grid {
     grid-template-columns: 1fr;
   }
