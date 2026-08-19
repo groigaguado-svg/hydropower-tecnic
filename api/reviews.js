@@ -154,12 +154,16 @@ async function loadPlace(placeId, apiKey) {
   };
 }
 
-// Cachear en el edge requiere la cabecera propia de Vercel: con un
-// "Cache-Control: s-maxage=..." a secas Vercel se lo queda, lo retira de la
-// respuesta y sirve MISS en todas las peticiones, con lo que cada arranque
-// en frío del lambda gastaría una llamada facturable a Google.
-// Vercel-CDN-Cache-Control manda en el edge y no llega al navegador;
-// Cache-Control queda solo para el cliente, que sí debe revalidar.
+// Se separan explícitamente las dos cachés en vez de dejar que Vercel
+// interprete un único "Cache-Control: s-maxage=...":
+//   - Vercel-CDN-Cache-Control manda en el edge y no llega al navegador.
+//   - Cache-Control queda solo para el cliente, que revalida siempre, para
+//     que un visitante no se quede 6 h con una copia vieja en su navegador.
+// Con esto el edge absorbe el tráfico y solo los arranques en frío del
+// lambda llegan a gastar una llamada facturable a la Places API.
+// Verificado en producción: peticiones GET seguidas devuelven
+// X-Vercel-Cache: HIT con Age creciente (ojo: con HEAD siempre sale MISS,
+// porque Vercel no sirve HEAD desde la caché del CDN).
 function setCacheHeaders(res, edgeSeconds, swrSeconds) {
   if (!edgeSeconds) {
     res.setHeader("Cache-Control", "no-store");
