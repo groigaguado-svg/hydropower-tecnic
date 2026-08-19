@@ -395,40 +395,232 @@
   }
 
   /* -------------------------------------------------------------------- */
-  /* Reseñas de Google: puntuación en vivo vía Places API (New)          */
-  /* Requiere un Place ID y una API key restringida al dominio en los    */
-  /* atributos data-place-id / data-api-key del elemento #googleRating.  */
-  /* Sin esas credenciales, la tarjeta se queda oculta en vez de mostrar */
-  /* datos inventados.                                                   */
+  /* Reseñas de Google: puntuación y últimas opiniones en vivo.            */
+  /* Los datos llegan de /api/reviews, una función serverless que consulta */
+  /* la Places API con la clave guardada en variables de entorno: la API   */
+  /* key nunca viaja al navegador. Si el endpoint no responde, el bloque   */
+  /* de reseñas se retira en lugar de mostrar contenido inventado.         */
   /* -------------------------------------------------------------------- */
-  function initGoogleReviews() {
+  var REVIEWS_MAX = 5;
+
+  // Logotipo "G" de Google, reconstruido con createElementNS para poder
+  // insertarlo sin recurrir a innerHTML.
+  var GOOGLE_GLYPH = [
+    ["#4285F4", "M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"],
+    ["#34A853", "M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"],
+    ["#FBBC05", "M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24s.85 6.91 2.34 9.88l7.35-5.7z"],
+    ["#EA4335", "M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"]
+  ];
+
+  var SVG_NS = "http://www.w3.org/2000/svg";
+
+  function buildGoogleGlyph(className) {
+    var svg = document.createElementNS(SVG_NS, "svg");
+    svg.setAttribute("class", className);
+    svg.setAttribute("viewBox", "0 0 48 48");
+    svg.setAttribute("aria-hidden", "true");
+    GOOGLE_GLYPH.forEach(function (entry) {
+      var path = document.createElementNS(SVG_NS, "path");
+      path.setAttribute("fill", entry[0]);
+      path.setAttribute("d", entry[1]);
+      svg.appendChild(path);
+    });
+    return svg;
+  }
+
+  function starsFor(rating) {
+    var full = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
+    return "★★★★★".slice(0, full) + "☆☆☆☆☆".slice(0, 5 - full);
+  }
+
+  function initialsFor(name) {
+    var parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return "?";
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  }
+
+  function formatReviewDate(review) {
+    if (review.relativeTime) return review.relativeTime;
+    if (!review.publishTime) return "";
+    var date = new Date(review.publishTime);
+    if (isNaN(date.getTime())) return "";
+    try {
+      return date.toLocaleDateString("es-ES", { month: "long", year: "numeric" });
+    } catch (err) {
+      return String(date.getFullYear());
+    }
+  }
+
+  // El texto de la reseña es contenido de terceros: se inserta siempre con
+  // textContent, nunca con innerHTML.
+  function buildReviewCard(review, index) {
+    var card = document.createElement("article");
+    card.className = "review-card review-card--enter";
+    card.style.transitionDelay = (index * 70) + "ms";
+
+    var head = document.createElement("div");
+    head.className = "review-card__head";
+
+    var avatar = document.createElement("span");
+    avatar.className = "review-card__avatar";
+    avatar.setAttribute("aria-hidden", "true");
+    avatar.textContent = initialsFor(review.author);
+    head.appendChild(avatar);
+
+    var meta = document.createElement("div");
+    meta.className = "review-card__meta";
+
+    var author;
+    if (review.authorUrl) {
+      author = document.createElement("a");
+      author.href = review.authorUrl;
+      author.target = "_blank";
+      author.rel = "noopener noreferrer nofollow";
+    } else {
+      author = document.createElement("span");
+    }
+    author.className = "review-card__author";
+    author.textContent = review.author;
+    meta.appendChild(author);
+
+    var dateText = formatReviewDate(review);
+    if (dateText) {
+      var time = document.createElement("time");
+      time.className = "review-card__date";
+      if (review.publishTime) time.setAttribute("datetime", review.publishTime);
+      time.textContent = dateText;
+      meta.appendChild(time);
+    }
+    head.appendChild(meta);
+    head.appendChild(buildGoogleGlyph("review-card__badge"));
+    card.appendChild(head);
+
+    var stars = document.createElement("div");
+    stars.className = "review-card__stars";
+    stars.setAttribute("role", "img");
+    stars.setAttribute("aria-label", review.rating + " de 5 estrellas");
+    stars.textContent = starsFor(review.rating);
+    card.appendChild(stars);
+
+    var text = document.createElement("p");
+    text.className = "review-card__text";
+    text.textContent = review.text;
+    card.appendChild(text);
+
+    // Las reseñas largas se recortan visualmente con line-clamp para que las
+    // tarjetas queden a la misma altura; el botón muestra el texto íntegro,
+    // que es lo que exigen las condiciones de atribución de Google.
+    var more = document.createElement("button");
+    more.type = "button";
+    more.className = "review-card__more";
+    more.textContent = "Leer más";
+    more.hidden = true;
+    more.addEventListener("click", function () {
+      var expanded = card.classList.toggle("is-expanded");
+      more.textContent = expanded ? "Leer menos" : "Leer más";
+    });
+    card.appendChild(more);
+
+    return { card: card, text: text, more: more };
+  }
+
+  function renderGoogleReviews(place, wrap) {
+    var grid = document.getElementById("googleReviewsGrid");
+    if (!grid) return;
+
+    var reviews = (place.reviews || []).slice(0, REVIEWS_MAX);
+    if (!reviews.length) {
+      if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
+      return;
+    }
+
+    var built = reviews.map(buildReviewCard);
+
+    grid.textContent = "";
+    grid.classList.remove("is-loading");
+    grid.setAttribute("aria-busy", "false");
+    grid.setAttribute("data-count", String(reviews.length));
+    built.forEach(function (item) {
+      grid.appendChild(item.card);
+    });
+
+    var legal = document.getElementById("googleReviewsLegal");
+    if (legal) legal.hidden = false;
+
+    // scrollHeight > clientHeight => el line-clamp está recortando texto. Hay
+    // que medir con la tipografía ya cargada (si no, el alto de línea cambia
+    // después y el botón no aparece) y repetir al cambiar el ancho, porque
+    // una reseña que cabe en escritorio puede no caber en móvil.
+    function refreshReadMore() {
+      built.forEach(function (item) {
+        if (item.card.classList.contains("is-expanded")) return;
+        item.more.hidden = item.text.scrollHeight - item.text.clientHeight <= 4;
+      });
+    }
+
+    window.requestAnimationFrame(function () {
+      built.forEach(function (item) {
+        item.card.classList.add("is-visible");
+      });
+      refreshReadMore();
+    });
+
+    if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === "function") {
+      document.fonts.ready.then(refreshReadMore).catch(function () { /* noop */ });
+    }
+
+    var resizeTimer = null;
+    window.addEventListener("resize", function () {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(refreshReadMore, 150);
+    }, { passive: true });
+  }
+
+  function renderGoogleRating(place) {
     var card = document.getElementById("googleRating");
-    if (!card) return;
+    if (!card || !place.rating) return;
 
-    var placeId = card.getAttribute("data-place-id");
-    var apiKey = card.getAttribute("data-api-key");
-    if (!placeId || !apiKey) return;
+    var starsEl = document.getElementById("googleRatingStars");
+    var scoreEl = document.getElementById("googleRatingScore");
+    var countEl = document.getElementById("googleRatingCount");
 
-    fetch("https://places.googleapis.com/v1/places/" + placeId + "?fields=rating,userRatingCount", {
-      headers: { "X-Goog-Api-Key": apiKey }
-    })
+    if (starsEl) starsEl.textContent = starsFor(place.rating);
+    if (scoreEl) scoreEl.textContent = place.rating.toFixed(1);
+    if (countEl) {
+      countEl.textContent = place.total === 1
+        ? "(1 reseña)"
+        : "(" + (place.total || 0) + " reseñas)";
+    }
+    card.setAttribute("aria-label", "Valoración media de " + place.rating.toFixed(1) + " sobre 5 en Google");
+    card.hidden = false;
+  }
+
+  function initGoogleReviews() {
+    var wrap = document.getElementById("googleReviews");
+    if (!wrap) return;
+
+    var endpoint = wrap.getAttribute("data-endpoint") || "/api/reviews";
+
+    fetch(endpoint, { headers: { "Accept": "application/json" } })
       .then(function (res) {
         if (!res.ok) return Promise.reject(new Error("HTTP " + res.status));
         return res.json();
       })
       .then(function (data) {
-        if (!data || !data.rating) return;
-        var full = Math.max(0, Math.min(5, Math.round(data.rating)));
-        var starsEl = document.getElementById("googleRatingStars");
-        var scoreEl = document.getElementById("googleRatingScore");
-        var countEl = document.getElementById("googleRatingCount");
-        if (starsEl) starsEl.textContent = "★★★★★".slice(0, full) + "☆☆☆☆☆".slice(0, 5 - full);
-        if (scoreEl) scoreEl.textContent = data.rating.toFixed(1);
-        if (countEl) countEl.textContent = "(" + (data.userRatingCount || 0) + " reseñas)";
-        card.hidden = false;
+        if (!data || !data.success || !data.place) return Promise.reject(new Error("respuesta sin datos"));
+
+        var place = data.place;
+        renderGoogleRating(place);
+
+        var link = document.getElementById("googleReviewsLink");
+        if (link && place.mapsUrl) link.href = place.mapsUrl;
+
+        renderGoogleReviews(place, wrap);
       })
       .catch(function (err) {
-        console.error("[HydropowerTecnic] No se pudo cargar la puntuación de Google:", err);
+        console.error("[HydropowerTecnic] No se pudieron cargar las reseñas de Google:", err);
+        if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
       });
   }
 

@@ -1117,74 +1117,6 @@ textarea:focus-visible {
   padding: var(--size-4xl) 0;
 }
 
-.testimonios__grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--size-2xl);
-}
-
-.testimonial-card {
-  background: var(--color-white);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-card);
-  padding: var(--size-xl);
-  display: flex;
-  flex-direction: column;
-  gap: var(--size-base);
-  transition: box-shadow var(--transition-normal), transform var(--transition-normal);
-}
-
-.testimonial-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-4px);
-}
-
-.testimonial-card__stars {
-  color: var(--color-secondary);
-  font-size: 16px;
-  letter-spacing: 2px;
-}
-
-.testimonial-card__quote {
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--color-text-primary);
-  flex: 1;
-}
-
-.testimonial-card__author {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding-top: var(--size-base);
-  border-top: 1px solid var(--color-border);
-}
-
-.testimonial-card__avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  color: var(--color-white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
-  flex-shrink: 0;
-}
-
-.testimonial-card__name {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-primary);
-}
-
-.testimonial-card__role {
-  font-size: 12px;
-  color: var(--color-text-secondary);
-}
-
 /* ==========================================================================
    6. ESPECIFICACIONES TÉCNICAS
    ========================================================================== */
@@ -1677,7 +1609,6 @@ textarea:focus-visible {
 /* Aparición escalonada dentro de rejillas (grid) */
 .pilares__grid .reveal:nth-child(2),
 .categorias__grid .reveal:nth-child(2),
-.testimonios__grid .reveal:nth-child(2),
 .specs__grid .reveal:nth-child(2),
 .stats__grid .reveal:nth-child(2) {
   transition-delay: 0.08s;
@@ -1685,7 +1616,6 @@ textarea:focus-visible {
 
 .pilares__grid .reveal:nth-child(3),
 .categorias__grid .reveal:nth-child(3),
-.testimonios__grid .reveal:nth-child(3),
 .specs__grid .reveal:nth-child(3),
 .stats__grid .reveal:nth-child(3) {
   transition-delay: 0.16s;
@@ -2711,6 +2641,243 @@ textarea:focus-visible {
 }
 
 /* ==========================================================================
+   RESEÑAS DE GOOGLE (datos en vivo desde /api/reviews)
+   ========================================================================== */
+
+.google-reviews {
+  margin-top: var(--size-2xl);
+}
+
+/* Flex en lugar de grid: con 5 tarjetas, la última fila queda centrada en
+   vez de dejar un hueco a la derecha. 3 por fila en escritorio, 2 en
+   tablet y 1 en móvil, sin necesidad de media queries para el reparto. */
+.google-reviews__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--size-xl);
+}
+
+.review-card {
+  flex: 1 1 320px;
+  max-width: 380px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  padding: var(--size-xl);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow var(--transition-normal), transform var(--transition-normal), border-color var(--transition-normal);
+}
+
+.review-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(30, 58, 138, 0.18);
+  transform: translateY(-4px);
+}
+
+.review-card__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.review-card__avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  color: var(--color-white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.review-card__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.review-card__author {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+a.review-card__author:hover,
+a.review-card__author:focus-visible {
+  text-decoration: underline;
+}
+
+.review-card__date {
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+  text-transform: lowercase;
+}
+
+.review-card__badge {
+  width: 20px;
+  height: 20px;
+  margin-left: auto;
+  flex-shrink: 0;
+  opacity: 0.9;
+}
+
+.review-card__stars {
+  color: #FBBC04;
+  font-size: 17px;
+  letter-spacing: 3px;
+  line-height: 1;
+}
+
+.review-card__text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--color-text-primary);
+  flex: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  line-clamp: 6;
+  overflow: hidden;
+}
+
+.review-card.is-expanded .review-card__text {
+  display: block;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  overflow: visible;
+}
+
+.review-card__more {
+  align-self: flex-start;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-secondary);
+  padding: 4px 0;
+  min-height: 32px;
+  transition: color var(--transition-fast);
+}
+
+.review-card__more:hover,
+.review-card__more:focus-visible {
+  color: var(--color-secondary-dark);
+  text-decoration: underline;
+}
+
+.google-reviews__legal {
+  margin-top: var(--size-lg);
+  text-align: center;
+  font-size: 12.5px;
+  color: var(--color-text-secondary);
+}
+
+/* Entrada escalonada de las tarjetas: el retardo lo fija main.js por índice,
+   porque el HTML llega después de que initReveal haya recorrido el DOM. */
+.review-card--enter {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow var(--transition-normal),
+              border-color var(--transition-normal);
+}
+
+.review-card--enter.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Esqueletos de carga --- */
+
+.review-card--skeleton {
+  pointer-events: none;
+  gap: 10px;
+}
+
+.review-card--skeleton:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+  border-color: var(--color-border);
+}
+
+.skeleton {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #EEF1F6 25%, #F7F9FC 50%, #EEF1F6 75%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s ease-in-out infinite;
+}
+
+.skeleton--avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+}
+
+.skeleton--line {
+  height: 12px;
+}
+
+.skeleton--w60 {
+  width: 60%;
+}
+
+.skeleton--w40 {
+  width: 40%;
+}
+
+.skeleton--block {
+  height: 96px;
+  margin-top: 4px;
+}
+
+@keyframes skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .google-reviews__grid {
+    gap: var(--size-lg);
+  }
+
+  .review-card {
+    flex-basis: 100%;
+    max-width: 100%;
+    padding: var(--size-lg);
+  }
+
+  .review-card__text {
+    font-size: 14.5px;
+    -webkit-line-clamp: 8;
+    line-clamp: 8;
+  }
+}
+
+/* ==========================================================================
    SLIDESHOW DE IMÁGENES DE SERVICIOS
    ========================================================================== */
 
@@ -3073,10 +3240,6 @@ textarea:focus-visible {
   .stats__item:last-child {
     border-bottom: none;
     padding-bottom: var(--size-base);
-  }
-
-  .testimonios__grid {
-    grid-template-columns: 1fr;
   }
 
   .footer__grid {

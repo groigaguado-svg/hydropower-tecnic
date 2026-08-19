@@ -368,56 +368,43 @@
             <svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24s.85 6.91 2.34 9.88l7.35-5.7z"/><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"/></svg>
             <span>Reseñas de Google</span>
           </div>
-          <div class="reviews-card__rating" id="googleRating" data-place-id="" data-api-key="" hidden>
-            <span class="reviews-card__stars" id="googleRatingStars"></span>
+          <div class="reviews-card__rating" id="googleRating" hidden>
+            <span class="reviews-card__stars" id="googleRatingStars" aria-hidden="true"></span>
             <span class="reviews-card__score" id="googleRatingScore"></span>
             <span class="reviews-card__count" id="googleRatingCount"></span>
           </div>
-          <p class="reviews-card__text">Consulta las reseñas verificadas de nuestros clientes en Google o cuéntanos tu experiencia en un solo clic.</p>
+          <p class="reviews-card__text">Opiniones verificadas, publicadas por nuestros clientes directamente en Google.</p>
           <div class="reviews-card__actions">
-            <a href="https://www.google.com/maps/search/?api=1&query=Hydropower+Tecnic+Pol%C3%ADgono+Industrial+Casarrubios+Alcal%C3%A1+de+Henares" target="_blank" rel="noopener noreferrer" class="btn btn--outline-dark">Ver reseñas</a>
-            <a href="https://www.google.com/maps/search/?api=1&query=Hydropower+Tecnic+Pol%C3%ADgono+Industrial+Casarrubios+Alcal%C3%A1+de+Henares" target="_blank" rel="noopener noreferrer" class="btn btn--primary">Escribir una reseña</a>
+            <a href="https://www.google.com/maps/search/?api=1&amp;query=Hydropower+Tecnic+Pol%C3%ADgono+Industrial+Casarrubios+Alcal%C3%A1+de+Henares" target="_blank" rel="noopener noreferrer" class="btn btn--outline-dark" id="googleReviewsLink">Ver reseñas</a>
+            <a href="https://www.google.com/maps/search/?api=1&amp;query=Hydropower+Tecnic+Pol%C3%ADgono+Industrial+Casarrubios+Alcal%C3%A1+de+Henares" target="_blank" rel="noopener noreferrer" class="btn btn--primary">Escribir una reseña</a>
           </div>
         </div>
 
-        <div class="testimonios__grid">
-
-          <article class="testimonial-card reveal">
-            <div class="testimonial-card__stars" aria-label="5 de 5 estrellas">★★★★★</div>
-            <p class="testimonial-card__quote">"Desde que trabajamos con Hydropower redujimos los tiempos de parada en línea un 30%. El seguimiento técnico marca la diferencia."</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">JG</div>
-              <div>
-                <div class="testimonial-card__name">Juan García</div>
-                <div class="testimonial-card__role">Director Técnico, ACME Corp</div>
-              </div>
-            </div>
-          </article>
-
-          <article class="testimonial-card reveal">
-            <div class="testimonial-card__stars" aria-label="5 de 5 estrellas">★★★★★</div>
-            <p class="testimonial-card__quote">"El servicio técnico es excepcional, resuelven cualquier incidencia en horas, no en días. Eso nos da tranquilidad."</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">ML</div>
-              <div>
-                <div class="testimonial-card__name">María López</div>
-                <div class="testimonial-card__role">Jefa de Compras, Indusmetal</div>
-              </div>
-            </div>
-          </article>
-
-          <article class="testimonial-card reveal">
-            <div class="testimonial-card__stars" aria-label="5 de 5 estrellas">★★★★★</div>
-            <p class="testimonial-card__quote">"Entrega rápida, productos de calidad certificada y precios competitivos. Nuestro proveedor de referencia desde hace tres años."</p>
-            <div class="testimonial-card__author">
-              <div class="testimonial-card__avatar">CR</div>
-              <div>
-                <div class="testimonial-card__name">Carlos Ruiz</div>
-                <div class="testimonial-card__role">Gerente, MakParts</div>
-              </div>
-            </div>
-          </article>
-
+        <!-- Reseñas reales servidas por /api/reviews (Places API, clave en el servidor).
+             Los esqueletos se sustituyen por las tarjetas al recibir la respuesta;
+             si no hay datos disponibles, el bloque entero se retira sin dejar hueco. -->
+        <div class="google-reviews" id="googleReviews" data-endpoint="/api/reviews">
+          <div class="google-reviews__grid is-loading" id="googleReviewsGrid" aria-live="polite" aria-busy="true">
+            <article class="review-card review-card--skeleton" aria-hidden="true">
+              <div class="skeleton skeleton--avatar"></div>
+              <div class="skeleton skeleton--line skeleton--w60"></div>
+              <div class="skeleton skeleton--line skeleton--w40"></div>
+              <div class="skeleton skeleton--block"></div>
+            </article>
+            <article class="review-card review-card--skeleton" aria-hidden="true">
+              <div class="skeleton skeleton--avatar"></div>
+              <div class="skeleton skeleton--line skeleton--w60"></div>
+              <div class="skeleton skeleton--line skeleton--w40"></div>
+              <div class="skeleton skeleton--block"></div>
+            </article>
+            <article class="review-card review-card--skeleton" aria-hidden="true">
+              <div class="skeleton skeleton--avatar"></div>
+              <div class="skeleton skeleton--line skeleton--w60"></div>
+              <div class="skeleton skeleton--line skeleton--w40"></div>
+              <div class="skeleton skeleton--block"></div>
+            </article>
+          </div>
+          <p class="google-reviews__legal" id="googleReviewsLegal" hidden>Reseñas obtenidas de Google. Se muestran las 5 más recientes.</p>
         </div>
       </div>
     </section>
