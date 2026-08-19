@@ -154,6 +154,24 @@ async function loadPlace(placeId, apiKey) {
   };
 }
 
+// Cachear en el edge requiere la cabecera propia de Vercel: con un
+// "Cache-Control: s-maxage=..." a secas Vercel se lo queda, lo retira de la
+// respuesta y sirve MISS en todas las peticiones, con lo que cada arranque
+// en frío del lambda gastaría una llamada facturable a Google.
+// Vercel-CDN-Cache-Control manda en el edge y no llega al navegador;
+// Cache-Control queda solo para el cliente, que sí debe revalidar.
+function setCacheHeaders(res, edgeSeconds, swrSeconds) {
+  if (!edgeSeconds) {
+    res.setHeader("Cache-Control", "no-store");
+    return;
+  }
+  var edge = "public, s-maxage=" + edgeSeconds +
+    (swrSeconds ? ", stale-while-revalidate=" + swrSeconds : "");
+  res.setHeader("Vercel-CDN-Cache-Control", edge);
+  res.setHeader("CDN-Cache-Control", edge);
+  res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+}
+
 module.exports = async function handler(req, res) {
   if (req.method !== "GET" && req.method !== "HEAD") {
     res.setHeader("Allow", "GET");
@@ -165,13 +183,13 @@ module.exports = async function handler(req, res) {
 
   if (!apiKey || !placeId) {
     console.error("[api/reviews] Faltan GOOGLE_MAPS_API_KEY o GOOGLE_PLACE_ID en el entorno.");
-    res.setHeader("Cache-Control", "no-store");
+    setCacheHeaders(res, 0);
     return res.status(503).json({ success: false, error: "not_configured" });
   }
 
   var now = Date.now();
   if (payloadCache && payloadCache.expiresAt > now) {
-    res.setHeader("Cache-Control", "public, s-maxage=" + CDN_MAX_AGE_S + ", stale-while-revalidate=" + CDN_SWR_S);
+    setCacheHeaders(res, CDN_MAX_AGE_S, CDN_SWR_S);
     return res.status(200).json(payloadCache.data);
   }
 
@@ -182,7 +200,7 @@ module.exports = async function handler(req, res) {
 
     payloadCache = { data: data, expiresAt: now + MEMORY_TTL_MS };
 
-    res.setHeader("Cache-Control", "public, s-maxage=" + CDN_MAX_AGE_S + ", stale-while-revalidate=" + CDN_SWR_S);
+    setCacheHeaders(res, CDN_MAX_AGE_S, CDN_SWR_S);
     return res.status(200).json(data);
   } catch (err) {
     // El mensaje puede contener detalles del upstream; se registra en el
@@ -190,11 +208,11 @@ module.exports = async function handler(req, res) {
     console.error("[api/reviews] No se pudieron obtener las reseñas de Google:", err);
 
     if (payloadCache) {
-      res.setHeader("Cache-Control", "public, s-maxage=60");
+      setCacheHeaders(res, 60);
       return res.status(200).json(payloadCache.data);
     }
 
-    res.setHeader("Cache-Control", "no-store");
+    setCacheHeaders(res, 0);
     return res.status(502).json({ success: false, error: "upstream_unavailable" });
   }
 };
