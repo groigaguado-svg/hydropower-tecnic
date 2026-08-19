@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.hydropowertecnic.es/sitemap.xml
+Sitemap: https://hydropowertecnicslrovi.vercel.app/sitemap.xml
