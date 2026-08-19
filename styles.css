@@ -2656,11 +2656,19 @@ textarea:focus-visible {
   flex-wrap: wrap;
   justify-content: center;
   gap: var(--size-xl);
+  /* Tope de ancho para que nunca entren 4 por fila: el reparto se mantiene
+     en 3 + 2 desde 1280px hasta pantallas muy anchas. */
+  max-width: 1180px;
+  margin: 0 auto;
 }
 
+/* Sin flex-grow a proposito: al crecer y toparse con un max-width, el
+   sobrante deja de repartirse y justify-content no llega a centrar la
+   ultima fila. Con base fija + shrink, el centrado funciona siempre,
+   tanto con una sola resena como con cinco. */
 .review-card {
-  flex: 1 1 320px;
-  max-width: 380px;
+  flex: 0 1 360px;
+  max-width: 100%;
   min-width: 0;
   display: flex;
   flex-direction: column;
