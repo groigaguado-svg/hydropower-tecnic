@@ -432,13 +432,17 @@
     return canvas.querySelectorAll("*").length > 1;
   }
 
-  function renderInteractiveMap(wrap, lat, lng, address) {
+  function newMapCanvas(wrap) {
     var canvas = document.createElement("div");
     canvas.className = "ubicacion__map-canvas";
     wrap.textContent = "";
     wrap.appendChild(canvas);
+    return canvas;
+  }
 
+  function renderInteractiveMap(wrap, lat, lng, address) {
     var center = { lat: lat, lng: lng };
+    var canvas = newMapCanvas(wrap);
 
     var styledOptions = baseMapOptions(center);
     styledOptions.styles = MAP_STYLE;
@@ -450,17 +454,20 @@
     // lleguen a disparar ni "idle" ni "tilesloaded" en varios segundos.
     // Si a los 2,5s solo está el div vacío que Maps siempre inserta, se
     // descarta el intento y se reconstruye sin estilo: un mapa interactivo
-    // sin colorear es mucho mejor que uno en blanco. Si ni eso llega a
-    // pintar nada, se cae al iframe de toda la vida.
+    // sin colorear es mucho mejor que uno en blanco. Reutilizar el mismo
+    // <div> para el segundo intento no vale -- Maps deja referencias
+    // internas atadas a ese nodo del primer intento fallido que interfieren
+    // con el segundo, así que se crea un <div> nuevo cada vez. Si ni el
+    // segundo intento pinta nada, se cae al iframe de toda la vida.
     window.setTimeout(function () {
       if (hasRenderedContent(canvas)) return;
 
-      canvas.textContent = "";
-      var plainMap = new google.maps.Map(canvas, baseMapOptions(center));
+      var canvas2 = newMapCanvas(wrap);
+      var plainMap = new google.maps.Map(canvas2, baseMapOptions(center));
       attachMarkerAndInfo(plainMap, center, address);
 
       window.setTimeout(function () {
-        if (hasRenderedContent(canvas)) return;
+        if (hasRenderedContent(canvas2)) return;
         buildAddressOnlyIframe(wrap, address);
       }, 2500);
     }, 2500);
