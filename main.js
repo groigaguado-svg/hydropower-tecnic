@@ -376,17 +376,10 @@
     return wrap;
   }
 
-  function renderInteractiveMap(wrap, lat, lng, address) {
-    var canvas = document.createElement("div");
-    canvas.className = "ubicacion__map-canvas";
-    wrap.textContent = "";
-    wrap.appendChild(canvas);
-
-    var center = { lat: lat, lng: lng };
-    var map = new google.maps.Map(canvas, {
+  function baseMapOptions(center) {
+    return {
       center: center,
       zoom: 17,
-      styles: MAP_STYLE,
       zoomControl: true,
       mapTypeControl: false,
       streetViewControl: true,
@@ -397,8 +390,10 @@
       // bajando -- un mapa "greedy" es la típica mala experiencia de mapas
       // incrustados.
       gestureHandling: "cooperative"
-    });
+    };
+  }
 
+  function attachMarkerAndInfo(map, center, address) {
     var marker = new google.maps.Marker({
       position: center,
       map: map,
@@ -414,7 +409,7 @@
       }
     });
 
-    var directionsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng;
+    var directionsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + center.lat + "," + center.lng;
     var infoWindow = new google.maps.InfoWindow({
       content: buildMapInfoContent(address, directionsUrl),
       maxWidth: 280
@@ -427,6 +422,48 @@
     // Abierto de entrada: la mayoría de visitantes no llega a hacer clic
     // en el marcador, y el nombre + "cómo llegar" es justo lo que buscan.
     infoWindow.open({ anchor: marker, map: map });
+  }
+
+  // Maps siempre inserta un div propio dentro del contenedor, incluso
+  // cuando no ha pintado nada -- por eso "¿ha pintado algo?" se comprueba
+  // por si hay ALGO más ahí dentro (imagen de vista previa, tiles,
+  // controles), no por si el contenedor está vacío del todo.
+  function hasRenderedContent(canvas) {
+    return canvas.querySelectorAll("*").length > 1;
+  }
+
+  function renderInteractiveMap(wrap, lat, lng, address) {
+    var canvas = document.createElement("div");
+    canvas.className = "ubicacion__map-canvas";
+    wrap.textContent = "";
+    wrap.appendChild(canvas);
+
+    var center = { lat: lat, lng: lng };
+
+    var styledOptions = baseMapOptions(center);
+    styledOptions.styles = MAP_STYLE;
+    var map = new google.maps.Map(canvas, styledOptions);
+    attachMarkerAndInfo(map, center, address);
+
+    // El estilo personalizado a veces se queda colgado sin pintar nada --
+    // comprobado en producción: sin excepción, sin aviso de CSP, sin que
+    // lleguen a disparar ni "idle" ni "tilesloaded" en varios segundos.
+    // Si a los 2,5s solo está el div vacío que Maps siempre inserta, se
+    // descarta el intento y se reconstruye sin estilo: un mapa interactivo
+    // sin colorear es mucho mejor que uno en blanco. Si ni eso llega a
+    // pintar nada, se cae al iframe de toda la vida.
+    window.setTimeout(function () {
+      if (hasRenderedContent(canvas)) return;
+
+      canvas.textContent = "";
+      var plainMap = new google.maps.Map(canvas, baseMapOptions(center));
+      attachMarkerAndInfo(plainMap, center, address);
+
+      window.setTimeout(function () {
+        if (hasRenderedContent(canvas)) return;
+        buildAddressOnlyIframe(wrap, address);
+      }, 2500);
+    }, 2500);
   }
 
   function buildAddressOnlyIframe(wrap, address) {
