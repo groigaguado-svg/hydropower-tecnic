@@ -199,11 +199,11 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ success: false, error: "method_not_allowed" });
   }
 
-  var apiKey = process.env.GOOGLE_MAPS_API_KEY;
+  var apiKey = process.env.GOOGLE_PLACES_API_KEY;
   var placeId = process.env.GOOGLE_PLACE_ID;
 
   if (!apiKey || !placeId) {
-    console.error("[api/reviews] Faltan GOOGLE_MAPS_API_KEY o GOOGLE_PLACE_ID en el entorno.");
+    console.error("[api/reviews] Faltan GOOGLE_PLACES_API_KEY o GOOGLE_PLACE_ID en el entorno.");
     setCacheHeaders(res, 0);
     return res.status(503).json({ success: false, error: "not_configured" });
   }
