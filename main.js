@@ -289,39 +289,197 @@
   }
 
   /* -------------------------------------------------------------------- */
-  /* Mapa de Google: usa la Maps Embed API oficial si hay API key         */
-  /* configurada (data-maps-api-key en #mapEmbed); si no, se mantiene el  */
-  /* iframe de solo-dirección ya presente en el HTML como alternativa sin */
-  /* clave. La API oficial evita el error de "esta página no puede       */
-  /* cargar Google Maps" que da el truco de embeber la búsqueda a pelo.   */
+  /* Mapa de Google: Maps JavaScript API con marca y estilo propios.      */
+  /* La clave se pide a /api/maps-key en vez de escribirla en el HTML --  */
+  /* este repositorio es público en GitHub, y esta clave (a diferencia de */
+  /* la de /api/reviews) sí tiene que llegar al navegador para funcionar; */
+  /* así al menos no queda nunca en el historial de git. Si algo falla   */
+  /* (red, la clave, el propio script de Google), se cae al iframe de    */
+  /* solo-dirección de siempre en vez de dejar un hueco vacío.           */
   /* -------------------------------------------------------------------- */
+
+  // Estilo del mapa ajustado a la marca: fondo en el mismo gris que
+  // --color-light, agua con un tinte del azul corporativo, autovías
+  // resaltadas en azul suave y puntos de interés / transporte ocultos
+  // para que nada compita visualmente con el marcador propio.
+  var MAP_STYLE = [
+    { elementType: "geometry", stylers: [{ color: "#f3f4f6" }] },
+    { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
+    { elementType: "labels.text.fill", stylers: [{ color: "#6b7280" }] },
+    { elementType: "labels.text.stroke", stylers: [{ color: "#f3f4f6" }] },
+    { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#c7ccd6" }] },
+    { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
+    { featureType: "administrative.neighborhood", stylers: [{ visibility: "off" }] },
+    { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#f3f4f6" }] },
+    { featureType: "poi", stylers: [{ visibility: "off" }] },
+    { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+    { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#dfe3ea" }] },
+    { featureType: "road.arterial", elementType: "labels.text.fill", stylers: [{ color: "#8891a1" }] },
+    { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#c3cfea" }] },
+    { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#1e3a8a" }] },
+    { featureType: "transit", stylers: [{ visibility: "off" }] },
+    { featureType: "water", elementType: "geometry", stylers: [{ color: "#c7d3e8" }] },
+    { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#8891a1" }] }
+  ];
+
+  // Glifo "place" (pin con hueco circular) en el naranja corporativo.
+  var MAP_PIN_PATH = "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z";
+
+  function loadGoogleMapsScript(apiKey) {
+    return new Promise(function (resolve, reject) {
+      if (window.google && window.google.maps && window.google.maps.Map) {
+        resolve();
+        return;
+      }
+      var callbackName = "__hydropowerMapsReady";
+      window[callbackName] = function () {
+        delete window[callbackName];
+        resolve();
+      };
+      var script = document.createElement("script");
+      script.src = "https://maps.googleapis.com/maps/api/js?key=" + encodeURIComponent(apiKey) +
+        "&v=weekly&loading=async&callback=" + callbackName;
+      script.async = true;
+      script.onerror = function () {
+        delete window[callbackName];
+        reject(new Error("maps_script_load_failed"));
+      };
+      document.head.appendChild(script);
+    });
+  }
+
+  // Contenido del InfoWindow por DOM, nunca por HTML de texto -- aunque
+  // aquí todo el texto es propio y fijo, se mantiene el mismo criterio que
+  // en las tarjetas de reseñas.
+  function buildMapInfoContent(address, directionsUrl) {
+    var wrap = document.createElement("div");
+    wrap.className = "map-infowindow";
+
+    var title = document.createElement("strong");
+    title.className = "map-infowindow__title";
+    title.textContent = "Hydropower Tecnic";
+    wrap.appendChild(title);
+
+    var addr = document.createElement("p");
+    addr.className = "map-infowindow__address";
+    addr.textContent = address;
+    wrap.appendChild(addr);
+
+    var link = document.createElement("a");
+    link.className = "map-infowindow__link";
+    link.href = directionsUrl;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "Cómo llegar →";
+    wrap.appendChild(link);
+
+    return wrap;
+  }
+
+  function renderInteractiveMap(wrap, lat, lng, address) {
+    var canvas = document.createElement("div");
+    canvas.className = "ubicacion__map-canvas";
+    wrap.textContent = "";
+    wrap.appendChild(canvas);
+
+    var center = { lat: lat, lng: lng };
+    var map = new google.maps.Map(canvas, {
+      center: center,
+      zoom: 17,
+      styles: MAP_STYLE,
+      zoomControl: true,
+      mapTypeControl: false,
+      streetViewControl: true,
+      fullscreenControl: true,
+      clickableIcons: false,
+      // "cooperative": hace falta Ctrl/Cmd + rueda para hacer zoom, así el
+      // mapa no le roba el scroll de la página a quien solo quiere seguir
+      // bajando -- un mapa "greedy" es la típica mala experiencia de mapas
+      // incrustados.
+      gestureHandling: "cooperative"
+    });
+
+    var marker = new google.maps.Marker({
+      position: center,
+      map: map,
+      title: "Hydropower Tecnic",
+      icon: {
+        path: MAP_PIN_PATH,
+        fillColor: "#EF6D00",
+        fillOpacity: 1,
+        strokeColor: "#0F172A",
+        strokeWeight: 1.5,
+        scale: 1.7,
+        anchor: new google.maps.Point(12, 22)
+      }
+    });
+
+    var directionsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + lat + "," + lng;
+    var infoWindow = new google.maps.InfoWindow({
+      content: buildMapInfoContent(address, directionsUrl),
+      maxWidth: 280
+    });
+
+    marker.addListener("click", function () {
+      infoWindow.open({ anchor: marker, map: map });
+    });
+
+    // Abierto de entrada: la mayoría de visitantes no llega a hacer clic
+    // en el marcador, y el nombre + "cómo llegar" es justo lo que buscan.
+    infoWindow.open({ anchor: marker, map: map });
+  }
+
+  function buildAddressOnlyIframe(wrap, address) {
+    var iframe = document.createElement("iframe");
+    iframe.src = "https://maps.google.com/maps?q=" + encodeURIComponent(address) + "&z=16&output=embed";
+    iframe.title = "Ubicación de Hydropower Tecnic en el mapa";
+    iframe.loading = "lazy";
+    iframe.referrerPolicy = "no-referrer-when-downgrade";
+    iframe.allowFullscreen = true;
+    wrap.textContent = "";
+    wrap.appendChild(iframe);
+  }
+
   function initGoogleMap() {
     var wrap = document.getElementById("mapEmbed");
     var placeholder = document.getElementById("mapPlaceholder");
     var loadBtn = document.getElementById("mapLoadBtn");
     if (!wrap || !placeholder || !loadBtn) return;
 
-    var address = wrap.getAttribute("data-address");
+    var lat = parseFloat(wrap.getAttribute("data-lat"));
+    var lng = parseFloat(wrap.getAttribute("data-lng"));
+    var address = wrap.getAttribute("data-address") || "";
+    var endpoint = wrap.getAttribute("data-endpoint") || "/api/maps-key";
     if (!address) return;
 
     // El mapa no se carga hasta que el visitante lo pide expresamente: al
     // insertarlo, Google puede instalar sus propias cookies (fuera de
     // nuestro control), así que no lo cargamos de antemano sin esa acción.
     loadBtn.addEventListener("click", function () {
-      var apiKey = wrap.getAttribute("data-maps-api-key");
-      var src = apiKey
-        ? "https://www.google.com/maps/embed/v1/place?key=" + encodeURIComponent(apiKey) + "&q=" + encodeURIComponent(address)
-        : "https://maps.google.com/maps?q=" + encodeURIComponent(address) + "&z=16&output=embed";
+      loadBtn.disabled = true;
+      loadBtn.textContent = "Cargando mapa…";
 
-      var iframe = document.createElement("iframe");
-      iframe.src = src;
-      iframe.title = "Ubicación de Hydropower Tecnic en el mapa";
-      iframe.loading = "lazy";
-      iframe.referrerPolicy = "no-referrer-when-downgrade";
-      iframe.allowFullscreen = true;
+      if (!isFinite(lat) || !isFinite(lng)) {
+        buildAddressOnlyIframe(wrap, address);
+        return;
+      }
 
-      wrap.innerHTML = "";
-      wrap.appendChild(iframe);
+      fetch(endpoint, { headers: { "Accept": "application/json" } })
+        .then(function (res) {
+          if (!res.ok) return Promise.reject(new Error("HTTP " + res.status));
+          return res.json();
+        })
+        .then(function (data) {
+          if (!data || !data.success || !data.key) return Promise.reject(new Error("respuesta sin clave"));
+          return loadGoogleMapsScript(data.key);
+        })
+        .then(function () {
+          renderInteractiveMap(wrap, lat, lng, address);
+        })
+        .catch(function (err) {
+          console.error("[HydropowerTecnic] No se pudo cargar el mapa interactivo, se usa el mapa básico:", err);
+          buildAddressOnlyIframe(wrap, address);
+        });
     });
   }
 

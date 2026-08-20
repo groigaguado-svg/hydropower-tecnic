@@ -2497,16 +2497,17 @@ textarea:focus-visible {
   border-radius: 16px;
   overflow: hidden;
   box-shadow: var(--shadow-md);
-  min-height: 420px;
+  min-height: 460px;
   background: var(--color-border);
-  max-width: 900px;
+  max-width: 1040px;
   margin: 0 auto;
 }
 
-.ubicacion__map iframe {
+.ubicacion__map iframe,
+.ubicacion__map-canvas {
   width: 100%;
   height: 100%;
-  min-height: 420px;
+  min-height: 460px;
   border: 0;
   display: block;
 }
@@ -2518,7 +2519,7 @@ textarea:focus-visible {
   justify-content: center;
   gap: var(--size-base);
   height: 100%;
-  min-height: 420px;
+  min-height: 460px;
   padding: var(--size-2xl);
   text-align: center;
   color: var(--color-text-secondary);
@@ -2540,6 +2541,42 @@ textarea:focus-visible {
 .map-placeholder__text a {
   color: var(--color-primary);
   font-weight: 700;
+  text-decoration: underline;
+}
+
+/* Contenido propio dentro del InfoWindow de Google Maps -- el marco
+   blanco, el globo y el botón de cerrar los pone Google; aquí solo se
+   tipografía el interior para que combine con el resto de la web. */
+.map-infowindow {
+  font-family: var(--font-body);
+  padding: 2px 0;
+}
+
+.map-infowindow__title {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.map-infowindow__address {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--color-text-secondary);
+  margin-bottom: 8px;
+}
+
+.map-infowindow__link {
+  display: inline-block;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
+.map-infowindow__link:hover,
+.map-infowindow__link:focus-visible {
+  color: var(--color-secondary-dark);
   text-decoration: underline;
 }
 
