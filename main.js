@@ -482,12 +482,19 @@
     // Las iniciales de arriba quedan pintadas como base; si hay foto, se
     // superpone encima. Si falla la carga (o el CSP bloquea el host), se
     // retira y las iniciales quedan como si nunca hubiera habido foto.
+    // Sin loading="lazy" a propósito: en Chromium, un <img> creado por JS y
+    // metido al DOM junto a otros en el mismo lote (aquí, hasta 5 seguidos)
+    // puede quedarse con la carga diferida para siempre -- el navegador
+    // calcula mal la distancia al viewport en ese instante y nunca lo
+    // reconsidera. Comprobado en producción: cambiar ese mismo <img> ya
+    // insertado de "lazy" a "eager" lo destrababa al momento. Con avatares
+    // de 44px y un máximo de 5 por página no hay nada que optimizar aquí,
+    // así que se cargan directos.
     if (review.photoUrl) {
       var photo = document.createElement("img");
       photo.className = "review-card__avatar-img";
       photo.src = review.photoUrl;
       photo.alt = "";
-      photo.loading = "lazy";
       photo.decoding = "async";
       photo.referrerPolicy = "no-referrer";
       photo.addEventListener("error", function () {
