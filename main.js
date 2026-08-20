@@ -433,6 +433,17 @@
     return "★★★★★".slice(0, full) + "☆☆☆☆☆".slice(0, 5 - full);
   }
 
+  // Fisher-Yates in-place, para no dejar sesgo hacia ninguna posición.
+  function shuffle(arr) {
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var tmp = arr[i];
+      arr[i] = arr[j];
+      arr[j] = tmp;
+    }
+    return arr;
+  }
+
   function initialsFor(name) {
     var parts = String(name || "").trim().split(/\s+/).filter(Boolean);
     if (!parts.length) return "?";
@@ -467,6 +478,23 @@
     avatar.setAttribute("aria-hidden", "true");
     avatar.textContent = initialsFor(review.author);
     head.appendChild(avatar);
+
+    // Las iniciales de arriba quedan pintadas como base; si hay foto, se
+    // superpone encima. Si falla la carga (o el CSP bloquea el host), se
+    // retira y las iniciales quedan como si nunca hubiera habido foto.
+    if (review.photoUrl) {
+      var photo = document.createElement("img");
+      photo.className = "review-card__avatar-img";
+      photo.src = review.photoUrl;
+      photo.alt = "";
+      photo.loading = "lazy";
+      photo.decoding = "async";
+      photo.referrerPolicy = "no-referrer";
+      photo.addEventListener("error", function () {
+        photo.remove();
+      });
+      avatar.appendChild(photo);
+    }
 
     var meta = document.createElement("div");
     meta.className = "review-card__meta";
@@ -529,7 +557,11 @@
     var grid = document.getElementById("googleReviewsGrid");
     if (!grid) return;
 
-    var reviews = (place.reviews || []).slice(0, REVIEWS_MAX);
+    // El servidor ya entrega como mucho las REVIEWS_MAX más recientes; aquí
+    // solo se baraja el ORDEN de presentación (Fisher-Yates), para que cada
+    // recarga muestre una combinación distinta en vez de clavar siempre la
+    // misma reseña en primer lugar.
+    var reviews = shuffle((place.reviews || []).slice(0, REVIEWS_MAX));
     if (!reviews.length) {
       if (wrap.parentNode) wrap.parentNode.removeChild(wrap);
       return;

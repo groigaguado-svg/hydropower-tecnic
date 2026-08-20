@@ -2613,26 +2613,36 @@ textarea:focus-visible {
   font-size: 14px;
 }
 
-/* Variante horizontal, usada como cabecera de prueba social en Casos de Uso */
+/* Variante horizontal, usada como cabecera de prueba social en Casos de Uso.
+   Estructura en dos filas -- cabecera (marca + valoración + acciones) y,
+   debajo, la línea de texto -- en vez de meter el párrafo a competir por
+   espacio en la misma fila que las etiquetas en negrita: así nunca queda
+   descentrado ni se parte en dos líneas de forma impredecible. */
 .reviews-card--inline {
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--size-lg);
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
   margin-bottom: var(--size-2xl);
 }
 
-.reviews-card--inline .reviews-card__brand {
-  flex-shrink: 0;
+.reviews-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-lg);
 }
 
-.reviews-card--inline .reviews-card__rating {
-  flex-shrink: 0;
+.reviews-card__identity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--size-lg);
 }
 
 .reviews-card--inline .reviews-card__text {
-  flex: 1 1 240px;
   margin: 0;
+  max-width: 640px;
 }
 
 .reviews-card--inline .reviews-card__actions {
@@ -2693,10 +2703,15 @@ textarea:focus-visible {
   gap: 12px;
 }
 
+/* Las iniciales quedan siempre pintadas como base; si hay foto de perfil,
+   la imagen se superpone encima. Si la foto falla al cargar, main.js la
+   retira del DOM y las iniciales quedan visibles sin ningún salto ni hueco. */
 .review-card__avatar {
+  position: relative;
   width: 44px;
   height: 44px;
   border-radius: 50%;
+  overflow: hidden;
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
   color: var(--color-white);
   display: flex;
@@ -2706,6 +2721,14 @@ textarea:focus-visible {
   font-size: 15px;
   letter-spacing: 0.5px;
   flex-shrink: 0;
+}
+
+.review-card__avatar-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .review-card__meta {
@@ -3320,14 +3343,18 @@ a.review-card__author:focus-visible {
   }
 
   .reviews-card--inline {
-    flex-direction: column;
-    align-items: stretch;
     padding: var(--size-lg);
     gap: 12px;
   }
 
+  .reviews-card__head {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
   .reviews-card--inline .reviews-card__text {
-    flex: none;
+    max-width: none;
     font-size: 13px;
   }
 

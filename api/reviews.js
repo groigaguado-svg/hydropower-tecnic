@@ -95,6 +95,22 @@ async function resolvePlaceId(configuredId, apiKey) {
   throw new Error("place_id_not_resolved");
 }
 
+// La foto de perfil se sirve directamente desde el CDN de Google (no se
+// proxea por el lambda: la URL no lleva ningún secreto, es la misma imagen
+// pública que se ve en Maps). Por defensa en profundidad se valida igual
+// que el host sea de Google antes de reenviarla al navegador -- así el CSP
+// del sitio solo necesita confiar en ese dominio, no en cualquier URL que
+// la API decida devolver.
+function isTrustedGooglePhotoUrl(value) {
+  if (typeof value !== "string") return false;
+  try {
+    var url = new URL(value);
+    return url.protocol === "https:" && /(^|\.)googleusercontent\.com$/i.test(url.hostname);
+  } catch (err) {
+    return false;
+  }
+}
+
 function normalizeReview(raw) {
   var author = raw.authorAttribution || {};
   var name = String(author.displayName || "").trim();
@@ -109,6 +125,7 @@ function normalizeReview(raw) {
   return {
     author: name.slice(0, 120),
     authorUrl: typeof author.uri === "string" && author.uri.indexOf("https://") === 0 ? author.uri : null,
+    photoUrl: isTrustedGooglePhotoUrl(author.photoUri) ? author.photoUri : null,
     rating: rating,
     text: text.slice(0, TEXT_MAX_CHARS),
     truncated: text.length > TEXT_MAX_CHARS,
