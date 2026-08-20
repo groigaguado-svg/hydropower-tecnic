@@ -25,8 +25,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css?v=20260820-1">
 
-  <!-- Schema.org -->
-  <script type="application/ld+json">
+  <!-- Schema.org. Sin aggregateRating a propósito: es un dato que solo vale
+       si es real, y el real cambia con el tiempo. main.js lo añade en
+       cuanto llega la respuesta de /api/reviews, con la valoración y el
+       total agregado de verdad -- misma fuente que alimenta las tarjetas
+       de reseñas visibles, ninguna llamada extra. -->
+  <script type="application/ld+json" id="schemaOrg">
   {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
@@ -48,12 +52,7 @@
     "sameAs": [
       "https://www.linkedin.com/company/hydropower-tecnic",
       "https://www.facebook.com/hydropowertecnic"
-    ],
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.8",
-      "reviewCount": "32"
-    }
+    ]
   }
   </script>
 </head>
@@ -671,6 +670,6 @@
     </div>
   </div>
 
-  <script src="main.js?v=20260820-2" defer></script>
+  <script src="main.js?v=20260820-3" defer></script>
 </body>
 </html>

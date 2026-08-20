@@ -635,6 +635,35 @@
     card.hidden = false;
   }
 
+  // El JSON-LD estático no declara aggregateRating a propósito: es un dato
+  // que solo tiene sentido si es real, y solo se sabe al llamar a la Places
+  // API. Se inyecta aquí, reaprovechando la misma respuesta que ya alimenta
+  // las tarjetas de reseñas -- sin llamada extra. Con 0 reseñas no se añade
+  // nada: una valoración sin reseñas detrás no significa nada y Google
+  // desaconseja declarar aggregateRating en ese caso.
+  function updateSchemaAggregateRating(place) {
+    if (!place || typeof place.rating !== "number" || !place.total) return;
+
+    var script = document.getElementById("schemaOrg");
+    if (!script) return;
+
+    var data;
+    try {
+      data = JSON.parse(script.textContent);
+    } catch (err) {
+      return;
+    }
+
+    data.aggregateRating = {
+      "@type": "AggregateRating",
+      "ratingValue": place.rating,
+      "reviewCount": place.total,
+      "bestRating": 5,
+      "worstRating": 1
+    };
+    script.textContent = JSON.stringify(data);
+  }
+
   function initGoogleReviews() {
     var wrap = document.getElementById("googleReviews");
     if (!wrap) return;
@@ -651,6 +680,7 @@
 
         var place = data.place;
         renderGoogleRating(place);
+        updateSchemaAggregateRating(place);
 
         var link = document.getElementById("googleReviewsLink");
         if (link && place.mapsUrl) link.href = place.mapsUrl;
