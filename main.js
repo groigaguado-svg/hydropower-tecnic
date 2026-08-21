@@ -398,13 +398,18 @@
       position: center,
       map: map,
       title: "Hydropower Tecnic",
+      // strokeWeight y scale en enteros a propósito: con decimales (1.5,
+      // 1.7) Google tira un "IntegerExpectedError" async, sin excepción
+      // capturable ni aviso de CSP, y el marcador -- y con él todo el mapa
+      // -- se queda sin pintar nada. Visto en la consola real de un
+      // visitante, no reproducible en pruebas automatizadas.
       icon: {
         path: MAP_PIN_PATH,
         fillColor: "#EF6D00",
         fillOpacity: 1,
         strokeColor: "#0F172A",
-        strokeWeight: 1.5,
-        scale: 1.7,
+        strokeWeight: 2,
+        scale: 2,
         anchor: new google.maps.Point(12, 22)
       }
     });
