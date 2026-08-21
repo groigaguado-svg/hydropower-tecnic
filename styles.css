@@ -2504,13 +2504,32 @@ textarea:focus-visible {
   margin: 0 auto;
 }
 
-.ubicacion__map iframe,
-.ubicacion__map-canvas {
+.ubicacion__map iframe {
   width: 100%;
   height: 100%;
   min-height: 460px;
   border: 0;
   display: block;
+}
+
+/* Enlace directo a "Cómo llegar", siempre visible, sin depender de que el
+   mapa esté cargado -- usa destination_place_id para que el destino sea
+   inequívocamente Hydropower Tecnic, no cualquier negocio vecino que
+   Google tenga indexado cerca de esas coordenadas. */
+.ubicacion__directions-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: var(--size-sm);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-secondary);
+}
+
+.ubicacion__directions-link:hover,
+.ubicacion__directions-link:focus-visible {
+  color: var(--color-secondary-dark);
+  text-decoration: underline;
 }
 
 .map-placeholder {
@@ -2542,42 +2561,6 @@ textarea:focus-visible {
 .map-placeholder__text a {
   color: var(--color-primary);
   font-weight: 700;
-  text-decoration: underline;
-}
-
-/* Contenido propio dentro del InfoWindow de Google Maps -- el marco
-   blanco, el globo y el botón de cerrar los pone Google; aquí solo se
-   tipografía el interior para que combine con el resto de la web. */
-.map-infowindow {
-  font-family: var(--font-body);
-  padding: 2px 0;
-}
-
-.map-infowindow__title {
-  display: block;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: 4px;
-}
-
-.map-infowindow__address {
-  font-size: 12.5px;
-  line-height: 1.5;
-  color: var(--color-text-secondary);
-  margin-bottom: 8px;
-}
-
-.map-infowindow__link {
-  display: inline-block;
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--color-secondary);
-}
-
-.map-infowindow__link:hover,
-.map-infowindow__link:focus-visible {
-  color: var(--color-secondary-dark);
   text-decoration: underline;
 }
 
@@ -3014,20 +2997,44 @@ a.review-card__author:focus-visible {
 }
 
 @media (max-width: 640px) {
+  /* En vez de encajar las flechas al lado del track (les resta ancho a las
+     tarjetas, y calcular ese ancho en vw fue justo lo que las desbordó: un
+     "84vw" tira del ANCHO DE LA PÁGINA, no del hueco real que le queda al
+     track una vez descontadas las flechas -- con viewport estrecho y
+     flechas + huecos de por medio, la tarjeta pedía más sitio del que
+     había). Aquí se envuelve: el track ocupa toda la fila de arriba a
+     ancho completo (100% de su propio contenedor, nunca de la ventana), y
+     las flechas caen a una fila propia debajo, centradas. */
   .reviews-carousel {
-    gap: var(--size-sm);
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--size-base);
   }
 
   .google-reviews__grid {
+    order: 1;
+    flex-basis: 100%;
+    width: 100%;
     gap: var(--size-lg);
   }
 
-  /* Una tarjeta a (casi) pantalla completa, con un asomo del siguiente
-     borde para insinuar que hay más -- sin ese pico, en móvil no queda
-     claro que la fila se pueda seguir desplazando. */
+  .reviews-carousel__arrow {
+    order: 2;
+    width: 40px;
+    height: 40px;
+  }
+
+  .reviews-carousel__arrow svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  /* Tarjeta a ancho completo del track (100% de su propio contenedor, ya
+     no de la ventana): con un solo hueco de margen a la derecha se
+     insinúa que hay más para desplazar, sin arriesgarse a desbordar. */
   .review-card {
-    flex-basis: 84vw;
-    max-width: 84vw;
+    flex-basis: calc(100% - 28px);
+    max-width: calc(100% - 28px);
     padding: var(--size-lg);
   }
 
@@ -3035,16 +3042,6 @@ a.review-card__author:focus-visible {
     font-size: 14.5px;
     -webkit-line-clamp: 8;
     line-clamp: 8;
-  }
-
-  .reviews-carousel__arrow {
-    width: 36px;
-    height: 36px;
-  }
-
-  .reviews-carousel__arrow svg {
-    width: 15px;
-    height: 15px;
   }
 }
 

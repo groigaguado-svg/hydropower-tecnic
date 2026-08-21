@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260821-2">
+  <link rel="stylesheet" href="styles.css?v=20260821-3">
 
   <!-- Schema.org. Sin aggregateRating a propósito: es un dato que solo vale
        si es real, y el real cambia con el tiempo. main.js lo añade en
@@ -551,12 +551,13 @@
           <span class="section-eyebrow">Ubicación</span>
           <h2 class="section-title">Visítanos en nuestro taller y almacén</h2>
           <p class="section-subtitle" style="margin: 0 auto;">Polígono Industrial Casarrubios, C/ Argentina Nº2, Nave A2 · 28806 Alcalá de Henares, Madrid.</p>
+          <a href="https://www.google.com/maps/dir/?api=1&destination=Hydropower+Tecnic+SL&destination_place_id=ChIJmYXTNgNJQg0RM4Pm9YI0CkY" target="_blank" rel="noopener noreferrer" class="ubicacion__directions-link">Cómo llegar →</a>
         </div>
-        <div class="ubicacion__map" id="mapEmbed" data-endpoint="/api/maps-key" data-lat="40.4950902" data-lng="-3.3959079" data-address="Polígono Industrial Casarrubios, C/ Argentina Nº2, Nave A2, 28806 Alcalá de Henares, Madrid, España">
+        <div class="ubicacion__map" id="mapEmbed" data-address="Polígono Industrial Casarrubios, C/ Argentina Nº2, Nave A2, 28806 Alcalá de Henares, Madrid, España">
           <div class="map-placeholder" id="mapPlaceholder">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
             <p class="map-placeholder__text">Este mapa lo proporciona Google. Al cargarlo, Google puede instalar sus propias cookies conforme a su <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">política de privacidad</a>.</p>
-            <button type="button" class="btn btn--primary" id="mapLoadBtn">Cargar mapa interactivo</button>
+            <button type="button" class="btn btn--primary" id="mapLoadBtn">Cargar mapa</button>
           </div>
         </div>
       </div>
@@ -678,6 +679,6 @@
     </div>
   </div>
 
-  <script src="main.js?v=20260821-3" defer></script>
+  <script src="main.js?v=20260821-4" defer></script>
 </body>
 </html>

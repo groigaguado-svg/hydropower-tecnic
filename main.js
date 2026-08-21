@@ -289,257 +289,39 @@
   }
 
   /* -------------------------------------------------------------------- */
-  /* Mapa de Google: Maps JavaScript API con marca y estilo propios.      */
-  /* La clave se pide a /api/maps-key en vez de escribirla en el HTML --  */
-  /* este repositorio es público en GitHub, y esta clave (a diferencia de */
-  /* la de /api/reviews) sí tiene que llegar al navegador para funcionar; */
-  /* así al menos no queda nunca en el historial de git. Si algo falla   */
-  /* (red, la clave, el propio script de Google), se cae al iframe de    */
-  /* solo-dirección de siempre en vez de dejar un hueco vacío.           */
+  /* Mapa de Google: iframe de solo-dirección, sin API key ni JavaScript  */
+  /* de Google. Hubo una versión anterior con la Maps JavaScript API      */
+  /* (mapa con colores de marca, marcador e InfoWindow propios), pero tras */
+  /* dos sesiones de depuración seguía fallando de forma intermitente sin */
+  /* ningún error claro, y cada intento -- con su reintento -- es una     */
+  /* llamada más a una API que Google puede facturar. Este iframe no      */
+  /* necesita clave, no depende de que ninguna API esté bien restringida  */
+  /* en Google Cloud, y no tiene ningún modo de fallo silencioso: si el   */
+  /* iframe carga, se ve el mapa; si no, se ve el aviso del propio        */
+  /* navegador, nunca un hueco en blanco.                                 */
   /* -------------------------------------------------------------------- */
-
-  // Estilo del mapa ajustado a la marca. El primer intento usaba el mismo
-  // gris que --color-light (#f3f4f6) para el fondo -- casi blanco, y sobre
-  // la página (también blanca) el mapa se perdía por completo. Ahora el
-  // fondo es un gris azulado con presencia real (sigue en la familia del
-  // azul corporativo, nada llamativo), y las carreteras van en blanco para
-  // que se recorten con claridad sobre ese fondo. Puntos de interés y
-  // transporte siguen ocultos para que nada compita con el marcador.
-  var MAP_STYLE = [
-    { elementType: "geometry", stylers: [{ color: "#dce3ef" }] },
-    { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-    { elementType: "labels.text.fill", stylers: [{ color: "#5b6478" }] },
-    { elementType: "labels.text.stroke", stylers: [{ color: "#dce3ef" }] },
-    { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#b7c0d6" }] },
-    { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
-    { featureType: "administrative.neighborhood", stylers: [{ visibility: "off" }] },
-    { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#dce3ef" }] },
-    { featureType: "poi", stylers: [{ visibility: "off" }] },
-    { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
-    { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#c7d0e0" }] },
-    { featureType: "road.arterial", elementType: "labels.text.fill", stylers: [{ color: "#6b7a99" }] },
-    { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#a9badc" }] },
-    { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#1e3a8a" }] },
-    { featureType: "transit", stylers: [{ visibility: "off" }] },
-    { featureType: "water", elementType: "geometry", stylers: [{ color: "#a8bee0" }] },
-    { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#5b6b8c" }] }
-  ];
-
-  // Glifo "place" (pin con hueco circular) en el naranja corporativo.
-  var MAP_PIN_PATH = "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z";
-
-  // Place ID canónico de Hydropower Tecnic (mismo que en api/reviews.js y
-  // en el botón "Escribir una reseña"). "Cómo llegar" lo usa para fijar el
-  // destino exacto: con solo lat/lng, Google Maps a veces resuelve al
-  // negocio más cercano indexado en ese punto en vez del nuestro -- pasó de
-  // verdad, llevaba al vecino "Muebles a medida Sago".
-  var MAP_PLACE_ID = "ChIJmYXTNgNJQg0RM4Pm9YI0CkY";
-
-  function loadGoogleMapsScript(apiKey) {
-    return new Promise(function (resolve, reject) {
-      if (window.google && window.google.maps && window.google.maps.Map) {
-        resolve();
-        return;
-      }
-      var callbackName = "__hydropowerMapsReady";
-      window[callbackName] = function () {
-        delete window[callbackName];
-        resolve();
-      };
-      var script = document.createElement("script");
-      script.src = "https://maps.googleapis.com/maps/api/js?key=" + encodeURIComponent(apiKey) +
-        "&v=weekly&loading=async&callback=" + callbackName;
-      script.async = true;
-      script.onerror = function () {
-        delete window[callbackName];
-        reject(new Error("maps_script_load_failed"));
-      };
-      document.head.appendChild(script);
-    });
-  }
-
-  // Contenido del InfoWindow por DOM, nunca por HTML de texto -- aunque
-  // aquí todo el texto es propio y fijo, se mantiene el mismo criterio que
-  // en las tarjetas de reseñas.
-  function buildMapInfoContent(address, directionsUrl) {
-    var wrap = document.createElement("div");
-    wrap.className = "map-infowindow";
-
-    var title = document.createElement("strong");
-    title.className = "map-infowindow__title";
-    title.textContent = "Hydropower Tecnic";
-    wrap.appendChild(title);
-
-    var addr = document.createElement("p");
-    addr.className = "map-infowindow__address";
-    addr.textContent = address;
-    wrap.appendChild(addr);
-
-    var link = document.createElement("a");
-    link.className = "map-infowindow__link";
-    link.href = directionsUrl;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.textContent = "Cómo llegar →";
-    wrap.appendChild(link);
-
-    return wrap;
-  }
-
-  function baseMapOptions(center) {
-    return {
-      center: center,
-      zoom: 17,
-      zoomControl: true,
-      mapTypeControl: false,
-      streetViewControl: true,
-      fullscreenControl: true,
-      clickableIcons: false,
-      // "cooperative": hace falta Ctrl/Cmd + rueda para hacer zoom, así el
-      // mapa no le roba el scroll de la página a quien solo quiere seguir
-      // bajando -- un mapa "greedy" es la típica mala experiencia de mapas
-      // incrustados.
-      gestureHandling: "cooperative"
-    };
-  }
-
-  function attachMarkerAndInfo(map, center, address) {
-    var marker = new google.maps.Marker({
-      position: center,
-      map: map,
-      title: "Hydropower Tecnic",
-      // strokeWeight y scale en enteros a propósito: con decimales (1.5,
-      // 1.7) Google tira un "IntegerExpectedError" async, sin excepción
-      // capturable ni aviso de CSP, y el marcador -- y con él todo el mapa
-      // -- se queda sin pintar nada. Visto en la consola real de un
-      // visitante, no reproducible en pruebas automatizadas.
-      icon: {
-        path: MAP_PIN_PATH,
-        fillColor: "#EF6D00",
-        fillOpacity: 1,
-        strokeColor: "#0F172A",
-        strokeWeight: 2,
-        scale: 2,
-        anchor: new google.maps.Point(12, 22)
-      }
-    });
-
-    var directionsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent("Hydropower Tecnic SL") +
-      "&destination_place_id=" + MAP_PLACE_ID;
-    var infoWindow = new google.maps.InfoWindow({
-      content: buildMapInfoContent(address, directionsUrl),
-      maxWidth: 280
-    });
-
-    marker.addListener("click", function () {
-      infoWindow.open({ anchor: marker, map: map });
-    });
-
-    // Abierto de entrada: la mayoría de visitantes no llega a hacer clic
-    // en el marcador, y el nombre + "cómo llegar" es justo lo que buscan.
-    infoWindow.open({ anchor: marker, map: map });
-  }
-
-  // Maps siempre inserta un div propio dentro del contenedor, incluso
-  // cuando no ha pintado nada -- por eso "¿ha pintado algo?" se comprueba
-  // por si hay ALGO más ahí dentro (imagen de vista previa, tiles,
-  // controles), no por si el contenedor está vacío del todo.
-  function hasRenderedContent(canvas) {
-    return canvas.querySelectorAll("*").length > 1;
-  }
-
-  function newMapCanvas(wrap) {
-    var canvas = document.createElement("div");
-    canvas.className = "ubicacion__map-canvas";
-    wrap.textContent = "";
-    wrap.appendChild(canvas);
-    return canvas;
-  }
-
-  function renderInteractiveMap(wrap, lat, lng, address) {
-    var center = { lat: lat, lng: lng };
-    var canvas = newMapCanvas(wrap);
-
-    var styledOptions = baseMapOptions(center);
-    styledOptions.styles = MAP_STYLE;
-    var map = new google.maps.Map(canvas, styledOptions);
-    attachMarkerAndInfo(map, center, address);
-
-    // El estilo personalizado a veces se queda colgado sin pintar nada --
-    // comprobado en producción: sin excepción, sin aviso de CSP, sin que
-    // lleguen a disparar ni "idle" ni "tilesloaded" en varios segundos.
-    // Si a los 2,5s solo está el div vacío que Maps siempre inserta, se
-    // descarta el intento y se reconstruye sin estilo: un mapa interactivo
-    // sin colorear es mucho mejor que uno en blanco. Reutilizar el mismo
-    // <div> para el segundo intento no vale -- Maps deja referencias
-    // internas atadas a ese nodo del primer intento fallido que interfieren
-    // con el segundo, así que se crea un <div> nuevo cada vez. Si ni el
-    // segundo intento pinta nada, se cae al iframe de toda la vida.
-    window.setTimeout(function () {
-      if (hasRenderedContent(canvas)) return;
-
-      var canvas2 = newMapCanvas(wrap);
-      var plainMap = new google.maps.Map(canvas2, baseMapOptions(center));
-      attachMarkerAndInfo(plainMap, center, address);
-
-      window.setTimeout(function () {
-        if (hasRenderedContent(canvas2)) return;
-        buildAddressOnlyIframe(wrap, address);
-      }, 2500);
-    }, 2500);
-  }
-
-  function buildAddressOnlyIframe(wrap, address) {
-    var iframe = document.createElement("iframe");
-    iframe.src = "https://maps.google.com/maps?q=" + encodeURIComponent(address) + "&z=16&output=embed";
-    iframe.title = "Ubicación de Hydropower Tecnic en el mapa";
-    iframe.loading = "lazy";
-    iframe.referrerPolicy = "no-referrer-when-downgrade";
-    iframe.allowFullscreen = true;
-    wrap.textContent = "";
-    wrap.appendChild(iframe);
-  }
-
   function initGoogleMap() {
     var wrap = document.getElementById("mapEmbed");
     var placeholder = document.getElementById("mapPlaceholder");
     var loadBtn = document.getElementById("mapLoadBtn");
     if (!wrap || !placeholder || !loadBtn) return;
 
-    var lat = parseFloat(wrap.getAttribute("data-lat"));
-    var lng = parseFloat(wrap.getAttribute("data-lng"));
     var address = wrap.getAttribute("data-address") || "";
-    var endpoint = wrap.getAttribute("data-endpoint") || "/api/maps-key";
     if (!address) return;
 
     // El mapa no se carga hasta que el visitante lo pide expresamente: al
     // insertarlo, Google puede instalar sus propias cookies (fuera de
     // nuestro control), así que no lo cargamos de antemano sin esa acción.
     loadBtn.addEventListener("click", function () {
-      loadBtn.disabled = true;
-      loadBtn.textContent = "Cargando mapa…";
+      var iframe = document.createElement("iframe");
+      iframe.src = "https://maps.google.com/maps?q=" + encodeURIComponent(address) + "&z=16&output=embed";
+      iframe.title = "Ubicación de Hydropower Tecnic en el mapa";
+      iframe.loading = "lazy";
+      iframe.referrerPolicy = "no-referrer-when-downgrade";
+      iframe.allowFullscreen = true;
 
-      if (!isFinite(lat) || !isFinite(lng)) {
-        buildAddressOnlyIframe(wrap, address);
-        return;
-      }
-
-      fetch(endpoint, { headers: { "Accept": "application/json" } })
-        .then(function (res) {
-          if (!res.ok) return Promise.reject(new Error("HTTP " + res.status));
-          return res.json();
-        })
-        .then(function (data) {
-          if (!data || !data.success || !data.key) return Promise.reject(new Error("respuesta sin clave"));
-          return loadGoogleMapsScript(data.key);
-        })
-        .then(function () {
-          renderInteractiveMap(wrap, lat, lng, address);
-        })
-        .catch(function (err) {
-          console.error("[HydropowerTecnic] No se pudo cargar el mapa interactivo, se usa el mapa básico:", err);
-          buildAddressOnlyIframe(wrap, address);
-        });
+      wrap.textContent = "";
+      wrap.appendChild(iframe);
     });
   }
 
