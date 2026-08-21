@@ -298,32 +298,42 @@
   /* solo-dirección de siempre en vez de dejar un hueco vacío.           */
   /* -------------------------------------------------------------------- */
 
-  // Estilo del mapa ajustado a la marca: fondo en el mismo gris que
-  // --color-light, agua con un tinte del azul corporativo, autovías
-  // resaltadas en azul suave y puntos de interés / transporte ocultos
-  // para que nada compita visualmente con el marcador propio.
+  // Estilo del mapa ajustado a la marca. El primer intento usaba el mismo
+  // gris que --color-light (#f3f4f6) para el fondo -- casi blanco, y sobre
+  // la página (también blanca) el mapa se perdía por completo. Ahora el
+  // fondo es un gris azulado con presencia real (sigue en la familia del
+  // azul corporativo, nada llamativo), y las carreteras van en blanco para
+  // que se recorten con claridad sobre ese fondo. Puntos de interés y
+  // transporte siguen ocultos para que nada compita con el marcador.
   var MAP_STYLE = [
-    { elementType: "geometry", stylers: [{ color: "#f3f4f6" }] },
+    { elementType: "geometry", stylers: [{ color: "#dce3ef" }] },
     { elementType: "labels.icon", stylers: [{ visibility: "off" }] },
-    { elementType: "labels.text.fill", stylers: [{ color: "#6b7280" }] },
-    { elementType: "labels.text.stroke", stylers: [{ color: "#f3f4f6" }] },
-    { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#c7ccd6" }] },
+    { elementType: "labels.text.fill", stylers: [{ color: "#5b6478" }] },
+    { elementType: "labels.text.stroke", stylers: [{ color: "#dce3ef" }] },
+    { featureType: "administrative", elementType: "geometry.stroke", stylers: [{ color: "#b7c0d6" }] },
     { featureType: "administrative.land_parcel", stylers: [{ visibility: "off" }] },
     { featureType: "administrative.neighborhood", stylers: [{ visibility: "off" }] },
-    { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#f3f4f6" }] },
+    { featureType: "landscape", elementType: "geometry", stylers: [{ color: "#dce3ef" }] },
     { featureType: "poi", stylers: [{ visibility: "off" }] },
     { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
-    { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#dfe3ea" }] },
-    { featureType: "road.arterial", elementType: "labels.text.fill", stylers: [{ color: "#8891a1" }] },
-    { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#c3cfea" }] },
+    { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#c7d0e0" }] },
+    { featureType: "road.arterial", elementType: "labels.text.fill", stylers: [{ color: "#6b7a99" }] },
+    { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#a9badc" }] },
     { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#1e3a8a" }] },
     { featureType: "transit", stylers: [{ visibility: "off" }] },
-    { featureType: "water", elementType: "geometry", stylers: [{ color: "#c7d3e8" }] },
-    { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#8891a1" }] }
+    { featureType: "water", elementType: "geometry", stylers: [{ color: "#a8bee0" }] },
+    { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#5b6b8c" }] }
   ];
 
   // Glifo "place" (pin con hueco circular) en el naranja corporativo.
   var MAP_PIN_PATH = "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z";
+
+  // Place ID canónico de Hydropower Tecnic (mismo que en api/reviews.js y
+  // en el botón "Escribir una reseña"). "Cómo llegar" lo usa para fijar el
+  // destino exacto: con solo lat/lng, Google Maps a veces resuelve al
+  // negocio más cercano indexado en ese punto en vez del nuestro -- pasó de
+  // verdad, llevaba al vecino "Muebles a medida Sago".
+  var MAP_PLACE_ID = "ChIJmYXTNgNJQg0RM4Pm9YI0CkY";
 
   function loadGoogleMapsScript(apiKey) {
     return new Promise(function (resolve, reject) {
@@ -414,7 +424,8 @@
       }
     });
 
-    var directionsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + center.lat + "," + center.lng;
+    var directionsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent("Hydropower Tecnic SL") +
+      "&destination_place_id=" + MAP_PLACE_ID;
     var infoWindow = new google.maps.InfoWindow({
       content: buildMapInfoContent(address, directionsUrl),
       maxWidth: 280
@@ -683,12 +694,16 @@
     var avatar = document.createElement("span");
     avatar.className = "review-card__avatar";
     avatar.setAttribute("aria-hidden", "true");
-    avatar.textContent = initialsFor(review.author);
     head.appendChild(avatar);
 
-    // Las iniciales de arriba quedan pintadas como base; si hay foto, se
-    // superpone encima. Si falla la carga (o el CSP bloquea el host), se
-    // retira y las iniciales quedan como si nunca hubiera habido foto.
+    // Las iniciales con fondo de color SOLO se pintan si no hay foto (o si
+    // la foto falla). Antes se pintaban siempre como base y la foto se
+    // superponía encima -- pero algunas fotos de Google (sobre todo los
+    // avatares "genéricos" que genera la propia Google cuando alguien no
+    // tiene foto de perfil real) llevan recortes o márgenes transparentes,
+    // y esa transparencia dejaba ver las iniciales de detrás. Sin nodo de
+    // iniciales de por medio, no hay nada que se pueda transparentar.
+    //
     // Sin loading="lazy" a propósito: en Chromium, un <img> creado por JS y
     // metido al DOM junto a otros en el mismo lote (aquí, hasta 5 seguidos)
     // puede quedarse con la carga diferida para siempre -- el navegador
@@ -697,6 +712,11 @@
     // insertado de "lazy" a "eager" lo destrababa al momento. Con avatares
     // de 44px y un máximo de 5 por página no hay nada que optimizar aquí,
     // así que se cargan directos.
+    function showInitialsFallback() {
+      avatar.textContent = initialsFor(review.author);
+      avatar.classList.add("review-card__avatar--fallback");
+    }
+
     if (review.photoUrl) {
       var photo = document.createElement("img");
       photo.className = "review-card__avatar-img";
@@ -706,8 +726,11 @@
       photo.referrerPolicy = "no-referrer";
       photo.addEventListener("error", function () {
         photo.remove();
+        showInitialsFallback();
       });
       avatar.appendChild(photo);
+    } else {
+      showInitialsFallback();
     }
 
     var meta = document.createElement("div");

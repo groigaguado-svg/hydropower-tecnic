@@ -2496,6 +2496,7 @@ textarea:focus-visible {
 .ubicacion__map {
   border-radius: 16px;
   overflow: hidden;
+  border: 1px solid var(--color-border);
   box-shadow: var(--shadow-md);
   min-height: 460px;
   background: var(--color-border);
@@ -2740,16 +2741,19 @@ textarea:focus-visible {
   gap: 12px;
 }
 
-/* Las iniciales quedan siempre pintadas como base; si hay foto de perfil,
-   la imagen se superpone encima. Si la foto falla al cargar, main.js la
-   retira del DOM y las iniciales quedan visibles sin ningún salto ni hueco. */
+/* Fondo neutro por defecto (placeholder mientras carga la foto real). El
+   degradado de color con iniciales solo se pinta con la variante
+   --fallback -- main.js la añade cuando no hay foto o cuando falla la
+   carga, nunca a la vez que una foto real (algunos avatares "genéricos"
+   de Google llevan recortes transparentes, y con las iniciales siempre
+   pintadas debajo se transparentaban por encima de la foto). */
 .review-card__avatar {
   position: relative;
   width: 44px;
   height: 44px;
   border-radius: 50%;
   overflow: hidden;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  background: var(--color-light);
   color: var(--color-white);
   display: flex;
   align-items: center;
@@ -2758,6 +2762,10 @@ textarea:focus-visible {
   font-size: 15px;
   letter-spacing: 0.5px;
   flex-shrink: 0;
+}
+
+.review-card__avatar--fallback {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
 }
 
 .review-card__avatar-img {
