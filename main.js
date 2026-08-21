@@ -574,13 +574,20 @@
 
   // Carrusel de reseñas: el propio track (#googleReviewsGrid) trae
   // scroll-snap nativo, así que las flechas y el autoplay solo piden "ve a
-  // la tarjeta N" con scrollIntoView() -- nunca calculan desplazamientos en
-  // píxeles a mano, que es justo donde suelen fallar estos carruseles
-  // (anchos que no cuadran entre breakpoints, un gap que se olvida al
-  // sumar, o quedarse "a medio camino" entre dos tarjetas). block:"nearest"
-  // es imprescindible: sin él, scrollIntoView también intenta desplazar la
-  // PÁGINA en vertical hasta centrar la tarjeta, un salto de scroll que no
-  // pinta nada aquí.
+  // la tarjeta N" -- nunca calculan desplazamientos en píxeles a mano, que
+  // es justo donde suelen fallar estos carruseles (anchos que no cuadran
+  // entre breakpoints, un gap que se olvida al sumar, o quedarse "a medio
+  // camino" entre dos tarjetas).
+  //
+  // goTo() usa track.scrollBy() en vez de scrollIntoView(): con
+  // scrollIntoView(), aunque se pida block:"nearest", si la tarjeta está
+  // completamente fuera de la pantalla (por ejemplo, el visitante ha
+  // bajado hasta Contacto y el autoplay dispara mientras tanto) el
+  // navegador entiende que SÍ hace falta desplazamiento vertical para
+  // traerla a la vista, y la PÁGINA entera salta hasta Reseñas -- pasaba
+  // de verdad, visto en producción. track.scrollBy() en cambio solo puede
+  // mover el scroll de ESE elemento, nunca el de la página, así que el
+  // salto ya no es posible pase lo que pase.
   function initReviewsCarousel(track, cards) {
     var prevBtn = document.getElementById("reviewsPrev");
     var nextBtn = document.getElementById("reviewsNext");
@@ -600,10 +607,11 @@
     function goTo(index) {
       var target = ((index % cards.length) + cards.length) % cards.length;
       currentIndex = target;
-      cards[target].scrollIntoView({
-        behavior: prefersReducedMotion ? "auto" : "smooth",
-        inline: "start",
-        block: "nearest"
+      var cardRect = cards[target].getBoundingClientRect();
+      var trackRect = track.getBoundingClientRect();
+      track.scrollBy({
+        left: cardRect.left - trackRect.left,
+        behavior: prefersReducedMotion ? "auto" : "smooth"
       });
     }
 
