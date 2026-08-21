@@ -790,6 +790,95 @@
     return { card: card, text: text, more: more };
   }
 
+  // Carrusel de reseñas: el propio track (#googleReviewsGrid) trae
+  // scroll-snap nativo, así que las flechas y el autoplay solo piden "ve a
+  // la tarjeta N" con scrollIntoView() -- nunca calculan desplazamientos en
+  // píxeles a mano, que es justo donde suelen fallar estos carruseles
+  // (anchos que no cuadran entre breakpoints, un gap que se olvida al
+  // sumar, o quedarse "a medio camino" entre dos tarjetas). block:"nearest"
+  // es imprescindible: sin él, scrollIntoView también intenta desplazar la
+  // PÁGINA en vertical hasta centrar la tarjeta, un salto de scroll que no
+  // pinta nada aquí.
+  function initReviewsCarousel(track, cards) {
+    var prevBtn = document.getElementById("reviewsPrev");
+    var nextBtn = document.getElementById("reviewsNext");
+    if (!prevBtn || !nextBtn) return;
+
+    if (cards.length <= 1) {
+      prevBtn.hidden = true;
+      nextBtn.hidden = true;
+      return;
+    }
+
+    var currentIndex = 0;
+    var AUTOPLAY_MS = 5000;
+    var autoplayTimer = null;
+    var touchResumeTimer = null;
+
+    function goTo(index) {
+      var target = ((index % cards.length) + cards.length) % cards.length;
+      currentIndex = target;
+      cards[target].scrollIntoView({
+        behavior: prefersReducedMotion ? "auto" : "smooth",
+        inline: "start",
+        block: "nearest"
+      });
+    }
+
+    function stopAutoplay() {
+      if (autoplayTimer) {
+        window.clearInterval(autoplayTimer);
+        autoplayTimer = null;
+      }
+    }
+
+    function startAutoplay() {
+      stopAutoplay();
+      if (prefersReducedMotion) return;
+      autoplayTimer = window.setInterval(function () {
+        goTo(currentIndex + 1);
+      }, AUTOPLAY_MS);
+    }
+
+    prevBtn.addEventListener("click", function () {
+      goTo(currentIndex - 1);
+      startAutoplay();
+    });
+    nextBtn.addEventListener("click", function () {
+      goTo(currentIndex + 1);
+      startAutoplay();
+    });
+
+    // El índice activo se recalcula con lo que de verdad está a la vista,
+    // no solo con lo que muevan las flechas -- así un arrastre manual con
+    // el dedo o el trackpad (que no pasa por goTo()) deja igualmente el
+    // carrusel listo para que la siguiente flecha avance desde ahí, no
+    // desde donde se quedó la última vez que se pulsó un botón.
+    if ("IntersectionObserver" in window) {
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+            var idx = cards.indexOf(entry.target);
+            if (idx !== -1) currentIndex = idx;
+          }
+        });
+      }, { root: track, threshold: [0.6] });
+      cards.forEach(function (card) { observer.observe(card); });
+    }
+
+    track.addEventListener("mouseenter", stopAutoplay);
+    track.addEventListener("mouseleave", startAutoplay);
+    track.addEventListener("focusin", stopAutoplay);
+    track.addEventListener("focusout", startAutoplay);
+    track.addEventListener("touchstart", stopAutoplay, { passive: true });
+    track.addEventListener("touchend", function () {
+      window.clearTimeout(touchResumeTimer);
+      touchResumeTimer = window.setTimeout(startAutoplay, 4000);
+    }, { passive: true });
+
+    startAutoplay();
+  }
+
   function renderGoogleReviews(place, wrap) {
     var grid = document.getElementById("googleReviewsGrid");
     if (!grid) return;
@@ -813,6 +902,8 @@
     built.forEach(function (item) {
       grid.appendChild(item.card);
     });
+
+    initReviewsCarousel(grid, built.map(function (item) { return item.card; }));
 
     var legal = document.getElementById("googleReviewsLegal");
     if (legal) legal.hidden = false;
@@ -1039,6 +1130,35 @@
     window.setTimeout(function () {
       items.forEach(reveal);
     }, 6000);
+  }
+
+  /* -------------------------------------------------------------------- */
+  /* Título de la pestaña: "Sección | Hydropower Tecnic", cambia según la */
+  /* sección que ocupe el centro de la pantalla. Data-driven por          */
+  /* [data-section-title] en vez de una lista de IDs fija en el JS, para  */
+  /* que el mismo código sirva en index.html y en servicios.html sin      */
+  /* ramificar por página.                                                */
+  /* -------------------------------------------------------------------- */
+  function initDynamicTitle() {
+    var sections = Array.prototype.slice.call(document.querySelectorAll("[data-section-title]"));
+    if (!sections.length || !("IntersectionObserver" in window)) return;
+
+    // Franja fina centrada en la pantalla: la sección "activa" es la que
+    // cruza ese centro, no simplemente la primera que asoma por abajo --
+    // así no hace falta calcular alturas a mano ni falla con secciones
+    // más cortas que la ventana.
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var label = entry.target.getAttribute("data-section-title");
+          if (label) document.title = label + " | Hydropower Tecnic";
+        }
+      });
+    }, { rootMargin: "-45% 0px -45% 0px", threshold: 0 });
+
+    sections.forEach(function (el) {
+      observer.observe(el);
+    });
   }
 
   /* -------------------------------------------------------------------- */
@@ -1299,6 +1419,7 @@
     safe(initHeroSwipe, "initHeroSwipe");
     safe(initHeroParallax, "initHeroParallax");
     safe(initReveal, "initReveal");
+    safe(initDynamicTitle, "initDynamicTitle");
     safe(initContactForm, "initContactForm");
     safe(initCookieConsent, "initCookieConsent");
   });

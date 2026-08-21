@@ -2696,28 +2696,100 @@ textarea:focus-visible {
   margin-top: var(--size-2xl);
 }
 
-/* Flex en lugar de grid: con 5 tarjetas, la última fila queda centrada en
-   vez de dejar un hueco a la derecha. 3 por fila en escritorio, 2 en
-   tablet y 1 en móvil, sin necesidad de media queries para el reparto. */
-.google-reviews__grid {
+/* Carrusel: flechas a los lados, track desplazable en medio. Las flechas
+   viven FUERA del track (no superpuestas encima de las tarjetas), así
+   nunca tapan contenido ni hace falta un degradado para disimular el
+   corte del borde. */
+.reviews-carousel {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--size-xl);
-  /* Tope de ancho para que nunca entren 4 por fila: el reparto se mantiene
-     en 3 + 2 desde 1280px hasta pantallas muy anchas. */
+  align-items: center;
+  gap: var(--size-base);
   max-width: 1180px;
   margin: 0 auto;
 }
 
-/* Sin flex-grow a proposito: al crecer y toparse con un max-width, el
-   sobrante deja de repartirse y justify-content no llega a centrar la
-   ultima fila. Con base fija + shrink, el centrado funciona siempre,
-   tanto con una sola resena como con cinco. */
-.review-card {
-  flex: 0 1 360px;
-  max-width: 100%;
+/* El propio track es el elemento con scroll -- con scroll-snap nativo el
+   navegador se encarga del rebote, el arrastre táctil y de no dejar nunca
+   una tarjeta "a medias" al soltar, que es justo donde suelen fallar los
+   carruseles hechos a mano con transform + cálculos de píxeles. La barra
+   de scroll se oculta visualmente (sigue siendo desplazable con teclado
+   gracias al tabindex) para que se lea como un carrusel, no como una lista
+   con scrollbar. */
+.google-reviews__grid {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--size-xl);
+  flex: 1 1 auto;
   min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 2px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding-block: 4px;
+}
+
+.google-reviews__grid::-webkit-scrollbar {
+  display: none;
+}
+
+.google-reviews__grid:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.reviews-carousel__arrow {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-white);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-primary);
+  transition: box-shadow var(--transition-normal), transform var(--transition-fast), border-color var(--transition-normal), background var(--transition-fast);
+}
+
+.reviews-carousel__arrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+.reviews-carousel__arrow:hover {
+  box-shadow: var(--shadow-md);
+  border-color: rgba(30, 58, 138, 0.25);
+  transform: translateY(-2px);
+}
+
+.reviews-carousel__arrow:active {
+  transform: translateY(0);
+}
+
+.reviews-carousel__arrow:disabled {
+  opacity: 0.35;
+  box-shadow: none;
+  transform: none;
+  cursor: default;
+}
+
+.reviews-carousel__arrow[hidden] {
+  display: none;
+}
+
+/* Ancho fijo (0 0, sin encoger) a propósito: con scroll-snap cada tarjeta
+   necesita un ancho estable para que los puntos de "enganche" no bailen
+   según cuánto espacio sobre en el viewport. El ancho en sí se ajusta por
+   breakpoint más abajo. */
+.review-card {
+  flex: 0 0 380px;
+  max-width: 86vw;
+  min-width: 0;
+  scroll-snap-align: start;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -2935,14 +3007,27 @@ a.review-card__author:focus-visible {
   }
 }
 
+@media (max-width: 1040px) {
+  .review-card {
+    flex-basis: 320px;
+  }
+}
+
 @media (max-width: 640px) {
+  .reviews-carousel {
+    gap: var(--size-sm);
+  }
+
   .google-reviews__grid {
     gap: var(--size-lg);
   }
 
+  /* Una tarjeta a (casi) pantalla completa, con un asomo del siguiente
+     borde para insinuar que hay más -- sin ese pico, en móvil no queda
+     claro que la fila se pueda seguir desplazando. */
   .review-card {
-    flex-basis: 100%;
-    max-width: 100%;
+    flex-basis: 84vw;
+    max-width: 84vw;
     padding: var(--size-lg);
   }
 
@@ -2950,6 +3035,16 @@ a.review-card__author:focus-visible {
     font-size: 14.5px;
     -webkit-line-clamp: 8;
     line-clamp: 8;
+  }
+
+  .reviews-carousel__arrow {
+    width: 36px;
+    height: 36px;
+  }
+
+  .reviews-carousel__arrow svg {
+    width: 15px;
+    height: 15px;
   }
 }
 

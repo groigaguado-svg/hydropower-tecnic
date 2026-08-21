@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#0F172A">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://hydropowertecnicslrovi.vercel.app/">
-  <title>Hydropower Tecnic</title>
+  <title>Inicio | Hydropower Tecnic</title>
 
   <!-- Open Graph -->
   <meta property="og:title" content="Hydropower Repair Solutions | Equipamiento Hidráulico y Neumático B2B">
@@ -23,7 +23,7 @@
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260821-1">
+  <link rel="stylesheet" href="styles.css?v=20260821-2">
 
   <!-- Schema.org. Sin aggregateRating a propósito: es un dato que solo vale
        si es real, y el real cambia con el tiempo. main.js lo añade en
@@ -106,7 +106,7 @@
   <main>
 
     <!-- ============ HERO ============ -->
-    <section class="hero" id="inicio">
+    <section class="hero" id="inicio" data-section-title="Inicio">
       <div class="hero__media" aria-hidden="true">
         <img src="assets/img/hero-bg.jpg" alt="" class="hero__media-img" fetchpriority="high" data-parallax>
         <div class="hero__media-overlay"></div>
@@ -204,7 +204,7 @@
     </div>
 
     <!-- ============ SERVICIOS ============ -->
-    <section class="categorias" id="servicios">
+    <section class="categorias" id="servicios" data-section-title="Servicios">
       <div class="container">
         <div class="section-header">
           <span class="section-eyebrow">Servicios</span>
@@ -272,7 +272,7 @@
     </section>
 
     <!-- ============ ESPECIFICACIONES TÉCNICAS ============ -->
-    <section class="specs" id="capacidades">
+    <section class="specs" id="capacidades" data-section-title="Capacidades">
       <div class="container">
         <div class="section-header">
           <span class="section-eyebrow">Capacidades técnicas</span>
@@ -338,7 +338,7 @@
     </section>
 
     <!-- ============ RESEÑAS Y TESTIMONIOS ============ -->
-    <section id="resenas">
+    <section id="resenas" data-section-title="Reseñas">
       <div class="stats">
         <div class="container stats__grid">
           <div class="stats__item reveal">
@@ -387,25 +387,33 @@
              Los esqueletos se sustituyen por las tarjetas al recibir la respuesta;
              si no hay datos disponibles, el bloque entero se retira sin dejar hueco. -->
         <div class="google-reviews" id="googleReviews" data-endpoint="/api/reviews">
-          <div class="google-reviews__grid is-loading" id="googleReviewsGrid" aria-live="polite" aria-busy="true">
-            <article class="review-card review-card--skeleton" aria-hidden="true">
-              <div class="skeleton skeleton--avatar"></div>
-              <div class="skeleton skeleton--line skeleton--w60"></div>
-              <div class="skeleton skeleton--line skeleton--w40"></div>
-              <div class="skeleton skeleton--block"></div>
-            </article>
-            <article class="review-card review-card--skeleton" aria-hidden="true">
-              <div class="skeleton skeleton--avatar"></div>
-              <div class="skeleton skeleton--line skeleton--w60"></div>
-              <div class="skeleton skeleton--line skeleton--w40"></div>
-              <div class="skeleton skeleton--block"></div>
-            </article>
-            <article class="review-card review-card--skeleton" aria-hidden="true">
-              <div class="skeleton skeleton--avatar"></div>
-              <div class="skeleton skeleton--line skeleton--w60"></div>
-              <div class="skeleton skeleton--line skeleton--w40"></div>
-              <div class="skeleton skeleton--block"></div>
-            </article>
+          <div class="reviews-carousel">
+            <button type="button" class="reviews-carousel__arrow reviews-carousel__arrow--prev" id="reviewsPrev" aria-label="Reseña anterior">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <div class="google-reviews__grid is-loading" id="googleReviewsGrid" tabindex="0" aria-live="polite" aria-busy="true" aria-label="Reseñas de clientes, desplazable">
+              <article class="review-card review-card--skeleton" aria-hidden="true">
+                <div class="skeleton skeleton--avatar"></div>
+                <div class="skeleton skeleton--line skeleton--w60"></div>
+                <div class="skeleton skeleton--line skeleton--w40"></div>
+                <div class="skeleton skeleton--block"></div>
+              </article>
+              <article class="review-card review-card--skeleton" aria-hidden="true">
+                <div class="skeleton skeleton--avatar"></div>
+                <div class="skeleton skeleton--line skeleton--w60"></div>
+                <div class="skeleton skeleton--line skeleton--w40"></div>
+                <div class="skeleton skeleton--block"></div>
+              </article>
+              <article class="review-card review-card--skeleton" aria-hidden="true">
+                <div class="skeleton skeleton--avatar"></div>
+                <div class="skeleton skeleton--line skeleton--w60"></div>
+                <div class="skeleton skeleton--line skeleton--w40"></div>
+                <div class="skeleton skeleton--block"></div>
+              </article>
+            </div>
+            <button type="button" class="reviews-carousel__arrow reviews-carousel__arrow--next" id="reviewsNext" aria-label="Reseña siguiente">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
           </div>
           <p class="google-reviews__legal" id="googleReviewsLegal" hidden>Reseñas obtenidas de Google. Se muestran las 5 más recientes.</p>
         </div>
@@ -413,7 +421,7 @@
     </section>
 
     <!-- ============ TRES PILARES / EMPRESA ============ -->
-    <section class="pilares" id="quienes-somos">
+    <section class="pilares" id="quienes-somos" data-section-title="Empresa">
       <div class="container">
         <div class="section-header">
           <span class="section-eyebrow">Empresa</span>
@@ -443,7 +451,7 @@
     </section>
 
     <!-- ============ CONTACTO ============ -->
-    <section class="contacto" id="contacto">
+    <section class="contacto" id="contacto" data-section-title="Contacto">
       <div class="container">
         <div class="section-header">
           <span class="section-eyebrow">Contacto</span>
@@ -537,7 +545,7 @@
     </section>
 
     <!-- ============ UBICACIÓN Y RESEÑAS DE GOOGLE ============ -->
-    <section class="ubicacion" id="ubicacion">
+    <section class="ubicacion" id="ubicacion" data-section-title="Ubicación">
       <div class="container">
         <div class="section-header">
           <span class="section-eyebrow">Ubicación</span>
@@ -670,6 +678,6 @@
     </div>
   </div>
 
-  <script src="main.js?v=20260821-2" defer></script>
+  <script src="main.js?v=20260821-3" defer></script>
 </body>
 </html>
