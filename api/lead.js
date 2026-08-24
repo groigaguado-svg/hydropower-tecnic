@@ -386,6 +386,13 @@ async function scoreLead(lead, scrape) {
   };
 }
 
+// Los nombres de campo tienen que ser IDÉNTICOS, carácter a carácter, a las
+// columnas de la tabla "Hydropower Tecnic-Leads" en Airtable (tblb6mXW8aIMjC7ea).
+// Comprobado el 24 de agosto de 2026 contra la tabla real vía la Metadata API:
+// varios de estos campos llevaban meses en inglés mientras la columna real
+// estaba en español, así que Airtable rechazaba el registro ENTERO por
+// "Unknown field name" -- ningún lead nuevo ha quedado guardado desde el
+// 3 de agosto por este motivo, no por límite de plan.
 function mapToAirtableFields(lead, scrape, ai) {
   return {
     "Nombre": lead.nombre,
@@ -395,14 +402,21 @@ function mapToAirtableFields(lead, scrape, ai) {
     "Presupuesto": lead.presupuesto ? PRESUPUESTO_LABELS[lead.presupuesto] : undefined,
     "Mensaje": lead.mensaje || undefined,
     "Scrape Status": scrape.status,
-    "Raw Scraped Excerpt": scrape.text ? scrape.text.slice(0, EXCERPT_MAX_CHARS) : undefined,
-    "AI Score": ai.score !== null ? ai.score : undefined,
-    "AI Priority": ai.priority || undefined,
-    "AI Reasoning": ai.reasoning || undefined,
+    "Info Obtenida": scrape.text ? scrape.text.slice(0, EXCERPT_MAX_CHARS) : undefined,
+    "AI Score (1-100)": ai.score !== null ? ai.score : undefined,
+    "Prioridad IA (baja/media/alta)": ai.priority || undefined,
+    "Apuntes IA": ai.reasoning || undefined,
     "Is B2B": ai.is_b2b !== null ? ai.is_b2b : undefined,
-    "Submitted At": new Date().toISOString(),
+    "Fecha de envío": new Date().toISOString(),
     // Prueba del consentimiento (RGPD art. 7.1): qué versión de la política se
     // aceptó y en qué momento. Sin esto, el consentimiento no es demostrable.
+    //
+    // OJO: estas tres columnas todavía NO existen en la tabla (comprobado el
+    // 24 de agosto de 2026). El reintento de writeToAirtable las quita del
+    // envío si Airtable las rechaza, así que el lead se sigue guardando, pero
+    // sin la prueba de consentimiento hasta que se creen a mano en Airtable:
+    // "Consentimiento Privacidad" (casilla), "Consentimiento Fecha" (fecha
+    // con hora) y "Politica Version" (texto de una línea).
     "Consentimiento Privacidad": true,
     "Consentimiento Fecha": lead.consentimientoEn,
     "Politica Version": PRIVACY_POLICY_VERSION
@@ -444,8 +458,19 @@ async function writeToAirtable(fields) {
     if (resp.ok) return resp.json();
 
     if (resp.status === 422) {
-      var detail = await resp.text().catch(function () { return ""; });
-      var unknown = /Unknown field name:\s*"([^"]+)"/i.exec(detail);
+      var detailText = await resp.text().catch(function () { return ""; });
+      // El campo va entre comillas escapadas dentro del JSON ("...\"Campo\"...");
+      // el regex tiene que aplicarse sobre el mensaje ya deserializado, no sobre
+      // el texto crudo, o nunca encuentra las comillas y esta detección de
+      // columna inexistente no funciona nunca. Comprobado: sobre el texto
+      // crudo el regex siempre da null; sobre el mensaje ya parseado, acierta.
+      var detailMessage = "";
+      try {
+        detailMessage = (JSON.parse(detailText).error || {}).message || "";
+      } catch (err) {
+        detailMessage = detailText;
+      }
+      var unknown = /Unknown field name:\s*"([^"]+)"/i.exec(detailMessage);
       if (unknown && Object.prototype.hasOwnProperty.call(current, unknown[1])) {
         console.error("[api/lead] Airtable no tiene la columna \"" + unknown[1] +
           "\"; se envía el lead sin ella. Créala en la tabla para no perder ese dato.");
