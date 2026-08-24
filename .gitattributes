@@ -1,0 +1,12 @@
+# Finales de línea normalizados a LF en el repositorio. Importa más de lo que
+# parece: el CSP del sitio autoriza el bloque JSON-LD de index.html por su
+# hash SHA-256, y ese hash cambia si los saltos de línea cambian.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.jfif binary
+*.webp binary
+*.ico binary
+*.woff2 binary

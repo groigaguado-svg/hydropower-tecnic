@@ -10,9 +10,12 @@
   <title>Política de Cookies | Hydropower Tecnic</title>
   <link rel="icon" href="assets/img/favicon.png" type="image/png" sizes="any">
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260821-3">
+  <!-- Tipografías autoalojadas: al cargar la página no sale ninguna petición a
+       servidores de Google, así que no se cede la IP del visitante a un tercero
+       sin base legal (RGPD). Ver assets/fonts/fonts.css. -->
+  <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/fonts/fonts.css?v=20260824">
+  <link rel="stylesheet" href="styles.css?v=20260824">
 </head>
 <body>
 
@@ -59,7 +62,7 @@
       <div class="container">
         <a href="index.html" class="legal-hero__back">← Volver a la web</a>
         <h1 class="legal-hero__title">Política de Cookies</h1>
-        <p class="legal-hero__updated">Última actualización: 31 de julio de 2026</p>
+        <p class="legal-hero__updated">Última actualización: 24 de agosto de 2026</p>
       </div>
     </section>
 
@@ -84,7 +87,7 @@
           <tbody>
             <tr>
               <td><strong>Necesarias</strong></td>
-              <td>Almacenamiento local del navegador (no es una cookie HTTP) para recordar que ya has visto el aviso de cookies. Sin él, el aviso volvería a aparecer en cada visita.</td>
+              <td>Almacenamiento local del navegador (<code>localStorage</code>, no es una cookie HTTP) bajo la clave <code>hydropowertecnic_cookie_consent</code>, para recordar que ya has visto el aviso de cookies. Sin él, el aviso volvería a aparecer en cada visita. No contiene ningún dato que permita identificarte ni se envía a ningún servidor.</td>
               <td>Persistente, hasta que borres los datos de navegación</td>
               <td>Propia</td>
             </tr>
@@ -92,9 +95,18 @@
         </table>
         </div>
 
-        <p>La página de inicio incluye además un mapa de Google Maps que solo se carga si pulsas expresamente el botón "Cargar mapa de Google": al hacerlo, Google puede instalar sus propias cookies conforme a su <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">política de privacidad</a>, ajena a nosotros.</p>
+        <p>La página de inicio incluye además un mapa de Google Maps que <strong>no se carga por sí solo</strong>: solo aparece si pulsas expresamente el botón "Cargar mapa de Google". Hasta ese momento tu navegador no contacta con Google. Al pulsarlo, Google puede instalar sus propias cookies conforme a su <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">política de privacidad</a>, ajena a nosotros.</p>
 
-        <h2>3. ¿Cómo gestionar tus preferencias?</h2>
+        <h2>3. Contenido de terceros: ninguno se carga sin que lo pidas</h2>
+        <p>Es habitual que una web cargue recursos alojados en servidores de terceros (tipografías, mapas, fotos de perfil, vídeos). Aunque no sean cookies, esas peticiones comunican tu dirección IP a esa empresa nada más abrir la página. En este sitio se ha evitado de forma deliberada:</p>
+        <ul>
+          <li><strong>Tipografías:</strong> se sirven desde nuestro propio dominio, no desde Google Fonts.</li>
+          <li><strong>Reseñas de Google:</strong> las pide nuestro servidor a Google y te las mostramos ya procesadas; tu navegador no habla con Google. Las fotos de perfil de quienes escriben las reseñas se sustituyen por sus iniciales precisamente para no tener que cargarlas desde servidores de Google.</li>
+          <li><strong>Mapa:</strong> como se indica arriba, solo se carga si lo pides.</li>
+        </ul>
+        <p>El resultado es que, al abrir esta web, tu navegador no realiza ninguna petición a servidores ajenos a <em>hydropowertecnic</em>.</p>
+
+        <h2>4. ¿Cómo gestionar tus preferencias?</h2>
         <p>Puedes consultar en cualquier momento qué almacenamos pulsando en "Información de cookies", disponible en el pie de página de todas nuestras páginas. También puedes configurar o bloquear el almacenamiento local directamente desde tu navegador:</p>
         <ul>
           <li><a href="https://support.google.com/chrome/answer/95647" target="_blank" rel="noopener noreferrer">Google Chrome</a></li>
@@ -104,10 +116,10 @@
         </ul>
         <p>Ten en cuenta que bloquear el almacenamiento local puede hacer que el aviso de cookies vuelva a aparecer en cada visita.</p>
 
-        <h2>4. Consentimiento y revocación</h2>
+        <h2>5. Consentimiento y revocación</h2>
         <p>Al acceder por primera vez al sitio, te mostramos un aviso informativo, ya que no instalamos cookies opcionales que requieran tu consentimiento previo. Si en el futuro incorporamos cookies de analítica o marketing, actualizaremos esta política y solicitaremos tu consentimiento antes de activarlas.</p>
 
-        <h2>5. Actualizaciones de esta política</h2>
+        <h2>6. Actualizaciones de esta política</h2>
         <p>Podemos actualizar esta Política de Cookies para adaptarla a cambios normativos o a nuevas funcionalidades del sitio web. Te recomendamos revisarla periódicamente.</p>
 
         <div class="legal-nav-links">
@@ -210,6 +222,6 @@
     </div>
   </div>
 
-  <script src="main.js?v=20260821-5" defer></script>
+  <script src="main.js?v=20260824" defer></script>
 </body>
 </html>

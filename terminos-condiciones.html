@@ -10,9 +10,12 @@
   <title>Términos y Condiciones | Hydropower Tecnic</title>
   <link rel="icon" href="assets/img/favicon.png" type="image/png" sizes="any">
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260821-3">
+  <!-- Tipografías autoalojadas: al cargar la página no sale ninguna petición a
+       servidores de Google, así que no se cede la IP del visitante a un tercero
+       sin base legal (RGPD). Ver assets/fonts/fonts.css. -->
+  <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/fonts/fonts.css?v=20260824">
+  <link rel="stylesheet" href="styles.css?v=20260824">
 </head>
 <body>
 
@@ -192,6 +195,6 @@
     </div>
   </div>
 
-  <script src="main.js?v=20260821-5" defer></script>
+  <script src="main.js?v=20260824" defer></script>
 </body>
 </html>

@@ -1,0 +1,20 @@
+# Ficheros que no deben acabar publicados en el sitio. Vercel sirve como
+# estático todo lo que hay en el repositorio, así que cualquier archivo suelto
+# en la raíz queda accesible desde Internet con solo acertar su nombre.
+
+# Documentación interna de generación del sitio (no es contenido del negocio)
+SKILL.md
+
+# Configuración de Apache: solo la usaría Hostinger, en Vercel no hace nada
+.htaccess
+
+# Plantilla de variables de entorno: no lleva secretos, pero enumera los
+# servicios que usa el backend; no hay razón para publicarla
+.env.example
+
+# Herramientas locales
+.claude/
+node_modules/
+
+# Utilidades de mantenimiento, no forman parte del sitio
+scripts/

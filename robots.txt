@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+# Los endpoints de servidor no son contenido indexable: /api/lead solo acepta
+# POST del formulario y /api/reviews es la fuente de datos de las reseñas.
+Disallow: /api/
+
 Sitemap: https://hydropowertecnicslrovi.vercel.app/sitemap.xml

@@ -21,15 +21,27 @@
 
   <link rel="icon" href="assets/img/favicon.png" type="image/png" sizes="any">
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260821-3">
+  <!-- Tipografías autoalojadas: al cargar la página no sale ninguna petición a
+       servidores de Google, así que no se cede la IP del visitante a un tercero
+       sin base legal (RGPD). Ver assets/fonts/fonts.css. -->
+  <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/fonts/fonts.css?v=20260824">
+  <link rel="stylesheet" href="styles.css?v=20260824">
 
   <!-- Schema.org. Sin aggregateRating a propósito: es un dato que solo vale
        si es real, y el real cambia con el tiempo. main.js lo añade en
        cuanto llega la respuesta de /api/reviews, con la valoración y el
        total agregado de verdad -- misma fuente que alimenta las tarjetas
-       de reseñas visibles, ninguna llamada extra. -->
+       de reseñas visibles, ninguna llamada extra.
+
+       Este es el único <script> en línea que queda en el sitio, y por eso el
+       CSP puede prohibir 'unsafe-inline' en script-src: cualquier <script>
+       que alguien lograra inyectar en el HTML no llegaría a ejecutarse.
+       Comprobado en Chromium que un bloque application/ld+json no cuenta como
+       script ejecutable y el CSP no lo bloquea, pero el hash SHA-256 de este
+       bloque está igualmente autorizado en vercel.json por si algún otro motor
+       es más estricto. Si se edita el contenido de aquí abajo, basta con
+       ejecutar `npm run csp-hash` para dejar ese hash al día. -->
   <script type="application/ld+json" id="schemaOrg">
   {
     "@context": "https://schema.org",
@@ -462,6 +474,15 @@
         <div class="contacto__grid">
           <form class="contacto__form" id="contactForm" novalidate>
 
+            <!-- Campo trampa contra bots: invisible y fuera del recorrido de
+                 teclado y de los lectores de pantalla, así que una persona no
+                 llega nunca a él. Los bots que rellenan todos los inputs del
+                 DOM sí lo hacen, y el servidor descarta ese envío. -->
+            <div class="form-honeypot" aria-hidden="true">
+              <label for="apellidos">No rellenes este campo</label>
+              <input type="text" id="apellidos" name="apellidos" tabindex="-1" autocomplete="off">
+            </div>
+
             <div class="form-field" data-field="nombre">
               <label for="nombre">Nombre completo <span class="required">*</span></label>
               <input type="text" id="nombre" name="nombre" placeholder="Ej. Ana Martínez" autocomplete="name" required>
@@ -679,6 +700,6 @@
     </div>
   </div>
 
-  <script src="main.js?v=20260821-5" defer></script>
+  <script src="main.js?v=20260824" defer></script>
 </body>
 </html>

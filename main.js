@@ -478,42 +478,17 @@
     avatar.setAttribute("aria-hidden", "true");
     head.appendChild(avatar);
 
-    // Las iniciales con fondo de color SOLO se pintan si no hay foto (o si
-    // la foto falla). Antes se pintaban siempre como base y la foto se
-    // superponía encima -- pero algunas fotos de Google (sobre todo los
-    // avatares "genéricos" que genera la propia Google cuando alguien no
-    // tiene foto de perfil real) llevan recortes o márgenes transparentes,
-    // y esa transparencia dejaba ver las iniciales de detrás. Sin nodo de
-    // iniciales de por medio, no hay nada que se pueda transparentar.
-    //
-    // Sin loading="lazy" a propósito: en Chromium, un <img> creado por JS y
-    // metido al DOM junto a otros en el mismo lote (aquí, hasta 5 seguidos)
-    // puede quedarse con la carga diferida para siempre -- el navegador
-    // calcula mal la distancia al viewport en ese instante y nunca lo
-    // reconsidera. Comprobado en producción: cambiar ese mismo <img> ya
-    // insertado de "lazy" a "eager" lo destrababa al momento. Con avatares
-    // de 44px y un máximo de 5 por página no hay nada que optimizar aquí,
-    // así que se cargan directos.
-    function showInitialsFallback() {
-      avatar.textContent = initialsFor(review.author);
-      avatar.classList.add("review-card__avatar--fallback");
-    }
-
-    if (review.photoUrl) {
-      var photo = document.createElement("img");
-      photo.className = "review-card__avatar-img";
-      photo.src = review.photoUrl;
-      photo.alt = "";
-      photo.decoding = "async";
-      photo.referrerPolicy = "no-referrer";
-      photo.addEventListener("error", function () {
-        photo.remove();
-        showInitialsFallback();
-      });
-      avatar.appendChild(photo);
-    } else {
-      showInitialsFallback();
-    }
+    // Iniciales sobre fondo de color en lugar de la foto de perfil de Google.
+    // La API devuelve la URL del avatar en googleusercontent.com, pero pintarlo
+    // significaría que el navegador de cada visitante conecta con un servidor de
+    // Google -- y le entrega su IP -- nada más abrir la página, sin aviso ni
+    // consentimiento. Es exactamente lo que evitamos con el mapa (que no se carga
+    // hasta que se pulsa el botón) y con las tipografías autoalojadas, así que
+    // aquí se aplica el mismo criterio. Si algún día se quieren recuperar las
+    // fotos, hay que servirlas desde nuestro propio dominio con una función que
+    // haga de proxy; no basta con volver a poner la URL de Google.
+    avatar.textContent = initialsFor(review.author);
+    avatar.classList.add("review-card__avatar--fallback");
 
     var meta = document.createElement("div");
     meta.className = "review-card__meta";
@@ -1062,7 +1037,12 @@
         email: form.email.value.trim(),
         web: form.web.value.trim(),
         presupuesto: form.presupuesto.value,
-        mensaje: form.mensaje.value.trim()
+        mensaje: form.mensaje.value.trim(),
+        // El servidor vuelve a exigir el consentimiento: la casilla marcada aquí
+        // es lo que se guarda como prueba junto al lead.
+        consentimiento: form.consentimiento.checked,
+        // Campo trampa: está oculto por CSS, una persona nunca lo rellena.
+        apellidos: form.apellidos ? form.apellidos.value : ""
       };
 
       fetch("/api/lead", {
@@ -1073,12 +1053,16 @@
       })
         .then(function (res) {
           return res.json().then(function (json) {
-            return { ok: res.ok, json: json };
+            return { ok: res.ok, status: res.status, json: json };
           });
         })
         .then(function (result) {
           submitBtn.disabled = false;
           submitBtn.classList.remove("btn--loading");
+          if (result.status === 429) {
+            showStatus("error", "Has enviado varias solicitudes seguidas. Espera unos minutos o llámanos directamente.");
+            return;
+          }
           if (result.ok && result.json && result.json.success) {
             showStatus("success", "¡Gracias, " + data.nombre.split(" ")[0] + "! Hemos recibido tu solicitud y te responderemos en menos de 24 horas.");
             launchConfetti(submitBtn);

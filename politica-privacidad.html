@@ -10,9 +10,12 @@
   <title>Política de Privacidad | Hydropower Tecnic</title>
   <link rel="icon" href="assets/img/favicon.png" type="image/png" sizes="any">
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260821-3">
+  <!-- Tipografías autoalojadas: al cargar la página no sale ninguna petición a
+       servidores de Google, así que no se cede la IP del visitante a un tercero
+       sin base legal (RGPD). Ver assets/fonts/fonts.css. -->
+  <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/fonts/fonts.css?v=20260824">
+  <link rel="stylesheet" href="styles.css?v=20260824">
 </head>
 <body>
 
@@ -59,7 +62,7 @@
       <div class="container">
         <a href="index.html" class="legal-hero__back">← Volver a la web</a>
         <h1 class="legal-hero__title">Política de Privacidad</h1>
-        <p class="legal-hero__updated">Última actualización: 31 de julio de 2026</p>
+        <p class="legal-hero__updated">Última actualización: 24 de agosto de 2026</p>
       </div>
     </section>
 
@@ -74,45 +77,65 @@
         </ul>
 
         <h2>2. ¿Qué datos tratamos y con qué finalidad?</h2>
-        <p>A través del formulario "Solicita tu Presupuesto Personalizado" recogemos los siguientes datos: nombre y apellidos, correo electrónico, empresa, tipo de equipamiento de interés, descripción de la necesidad y, opcionalmente, presupuesto aproximado. Estos datos se tratan con la finalidad de:</p>
+        <p>Solo tratamos los datos que nos facilitas voluntariamente a través del formulario <em>"Solicita tu Presupuesto Personalizado"</em>. En concreto:</p>
+        <ul>
+          <li><strong>Nombre</strong> y <strong>correo electrónico</strong> (obligatorios): para poder identificarte y responderte.</li>
+          <li><strong>Empresa</strong>, <strong>sitio web de tu empresa</strong>, <strong>presupuesto orientativo</strong> e <strong>información adicional</strong> (opcionales): para preparar una respuesta ajustada a lo que necesitas.</li>
+        </ul>
+        <p>No utilizamos herramientas de analítica ni de publicidad, no elaboramos perfiles de navegación y no registramos tu dirección IP ni las páginas que visitas. La finalidad del tratamiento es:</p>
         <ul>
           <li>Atender y responder a tu solicitud de información o presupuesto.</li>
           <li>Gestionar la relación comercial precontractual y, en su caso, contractual.</li>
           <li>Enviarte comunicaciones comerciales sobre nuestros productos y servicios, únicamente si nos das tu consentimiento expreso para ello.</li>
-          <li>Evaluar de forma automatizada el interés comercial de tu solicitud (análisis interno de priorización de leads), sin que ello produzca efectos jurídicos sobre ti ni te sea comunicado.</li>
+          <li>Priorizar internamente las solicitudes recibidas mediante una valoración automatizada, en los términos que se explican en el apartado siguiente.</li>
         </ul>
 
-        <h2>3. Legitimación</h2>
+        <h2>3. Valoración automatizada de la solicitud</h2>
+        <p>Para organizar el orden en que atendemos las solicitudes, cada una recibe una puntuación orientativa de interés comercial generada de forma automática con un modelo de inteligencia artificial (Gemini, de Google). En ese proceso:</p>
+        <ul>
+          <li>Si has facilitado el sitio web de tu empresa, nuestro servidor descarga esa página pública y extrae de ella un resumen en texto de la actividad de la empresa.</li>
+          <li>Al modelo se le envían únicamente el nombre de la empresa, el dominio de tu correo (no la dirección completa), el presupuesto orientativo, el mensaje que hayas escrito y ese resumen de la web. <strong>No se le envían tu nombre ni tu dirección de correo electrónico.</strong></li>
+          <li>El resultado es de uso puramente interno: no se te comunica, no se publica y no condiciona si te respondemos o no.</li>
+        </ul>
+        <p>Esta valoración no constituye una decisión individual automatizada de las previstas en el artículo 22 del RGPD: no produce efectos jurídicos sobre ti ni te afecta significativamente de modo similar, y siempre hay una persona que revisa y decide sobre cada solicitud. Aun así, puedes oponerte a ella escribiéndonos a la dirección del apartado 7.</p>
+
+        <h2>4. Legitimación</h2>
         <p>La base legal para el tratamiento de tus datos es:</p>
         <ul>
           <li><strong>Ejecución de medidas precontractuales</strong> a petición del interesado (art. 6.1.b RGPD), al solicitar un presupuesto.</li>
-          <li><strong>Consentimiento del interesado</strong> (art. 6.1.a RGPD), que prestas expresamente al marcar la casilla de aceptación de esta Política de Privacidad en el formulario, y que también rige para el envío de comunicaciones comerciales.</li>
-          <li><strong>Interés legítimo</strong> (art. 6.1.f RGPD), para garantizar la seguridad y el correcto funcionamiento del sitio web.</li>
+          <li><strong>Consentimiento del interesado</strong> (art. 6.1.a RGPD), que prestas expresamente al marcar la casilla de aceptación de esta Política de Privacidad en el formulario, y que también rige para el envío de comunicaciones comerciales. Guardamos constancia de la fecha y hora en que se prestó y de la versión de esta política aceptada, tal como exige el artículo 7.1 del RGPD. Puedes retirarlo en cualquier momento, sin que ello afecte a la licitud del tratamiento anterior.</li>
+          <li><strong>Interés legítimo</strong> (art. 6.1.f RGPD), para la priorización interna de solicitudes comerciales descrita en el apartado 3 y para garantizar la seguridad y el correcto funcionamiento del sitio web.</li>
         </ul>
 
-        <h2>4. Plazo de conservación</h2>
-        <p>Los datos se conservarán mientras se mantenga la relación comercial o mientras no se solicite su supresión, y en todo caso durante los plazos legalmente exigibles para atender eventuales responsabilidades derivadas del tratamiento.</p>
-
-        <h2>5. Destinatarios y cesiones de datos</h2>
-        <p>No vendemos datos personales ni los cedemos a terceros con fines publicitarios. Para poder prestar el servicio, compartimos los datos del formulario con los siguientes encargados del tratamiento (art. 28 RGPD), sujetos a las garantías contractuales correspondientes:</p>
+        <h2>5. Plazo de conservación</h2>
         <ul>
-          <li><strong>Vercel Inc.</strong> — alojamiento web y ejecución de las funciones de servidor.</li>
-          <li><strong>Google (Gemini API)</strong> — análisis automatizado del interés comercial de la solicitud recibida.</li>
-          <li><strong>Airtable</strong> — almacenamiento interno de las solicitudes de presupuesto recibidas.</li>
+          <li><strong>Solicitudes que no derivan en relación comercial:</strong> se conservan un máximo de 12 meses desde el último contacto, y después se suprimen.</li>
+          <li><strong>Solicitudes que sí derivan en relación comercial:</strong> se conservan mientras la relación se mantenga y, una vez finalizada, durante los plazos de prescripción legalmente aplicables (entre otros, 4 años en materia fiscal y 6 años de conservación de documentación mercantil conforme al artículo 30 del Código de Comercio).</li>
+          <li><strong>Consentimiento para comunicaciones comerciales:</strong> hasta que lo retires o solicites la baja.</li>
         </ul>
-        <p>Estos proveedores pueden implicar una transferencia internacional de datos fuera del Espacio Económico Europeo. En tal caso, se realiza acogiéndose a las garantías previstas en el RGPD, como las Cláusulas Contractuales Tipo aprobadas por la Comisión Europea.</p>
+        <p>En cualquiera de los casos, si solicitas la supresión de tus datos la atenderemos de inmediato, salvo en la parte que debamos conservar bloqueada para atender responsabilidades legales.</p>
 
-        <h2>6. Tus derechos</h2>
-        <p>Puedes ejercer en cualquier momento tus derechos de acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad de los datos, así como retirar tu consentimiento, enviando un correo a <a href="mailto:sat@hydropowertecnic.com">sat@hydropowertecnic.com</a> indicando el derecho que deseas ejercer y adjuntando copia de un documento que acredite tu identidad.</p>
+        <h2>6. Destinatarios y transferencias internacionales</h2>
+        <p>No vendemos datos personales ni los cedemos a terceros con fines publicitarios. Para poder prestar el servicio, los datos del formulario se comunican a los siguientes encargados del tratamiento (art. 28 RGPD), sujetos al correspondiente contrato de encargo:</p>
+        <ul>
+          <li><strong>Vercel Inc.</strong> — alojamiento del sitio web y ejecución de las funciones de servidor.</li>
+          <li><strong>Google Ireland Ltd. / Google LLC (Gemini API)</strong> — valoración automatizada descrita en el apartado 3, con los datos allí indicados.</li>
+          <li><strong>Airtable (Formagrid Inc.)</strong> — almacenamiento interno de las solicitudes recibidas.</li>
+        </ul>
+        <p>Estos proveedores están establecidos en Estados Unidos, por lo que el tratamiento implica una transferencia internacional de datos fuera del Espacio Económico Europeo. Dicha transferencia se ampara en las Cláusulas Contractuales Tipo aprobadas por la Comisión Europea y, cuando resulta aplicable, en la Decisión de Adecuación del Marco de Privacidad de Datos UE-EE. UU.</p>
+        <p>Además, en la página de inicio se muestran las reseñas públicas de nuestro perfil de Google. Esas reseñas las pide <em>nuestro propio servidor</em> a Google, no tu navegador: al cargar la web no se establece ninguna conexión con Google ni se le comunica tu dirección IP. Lo mismo ocurre con las tipografías del sitio, que se sirven desde nuestro propio dominio. La única excepción es el mapa de la sección "Ubicación", que no se carga hasta que pulsas expresamente el botón correspondiente; a partir de ese momento la relación con Google se rige por la política de privacidad de Google.</p>
+
+        <h2>7. Tus derechos</h2>
+        <p>Puedes ejercer en cualquier momento tus derechos de acceso, rectificación, supresión, oposición, limitación del tratamiento y portabilidad de los datos, así como retirar tu consentimiento, enviando un correo a <a href="mailto:sat@hydropowertecnic.com">sat@hydropowertecnic.com</a> indicando el derecho que deseas ejercer. Solo te pediremos un documento acreditativo de tu identidad si existen dudas razonables sobre quién realiza la solicitud. Responderemos en el plazo máximo de un mes.</p>
         <p>Si consideras que el tratamiento de tus datos no se ajusta a la normativa vigente, tienes derecho a presentar una reclamación ante la <a href="https://www.aepd.es" target="_blank" rel="noopener noreferrer">Agencia Española de Protección de Datos (AEPD)</a>.</p>
 
-        <h2>7. Medidas de seguridad</h2>
-        <p>Hydropower Repair Solutions aplica las medidas técnicas y organizativas necesarias para garantizar un nivel de seguridad adecuado al riesgo, evitando la pérdida, alteración, acceso no autorizado o robo de los datos personales facilitados.</p>
+        <h2>8. Medidas de seguridad</h2>
+        <p>Hydropower Repair Solutions aplica las medidas técnicas y organizativas necesarias para garantizar un nivel de seguridad adecuado al riesgo, evitando la pérdida, alteración, acceso no autorizado o robo de los datos personales facilitados. Entre otras: cifrado en tránsito (HTTPS) en todo el sitio, minimización de los datos que se comunican a terceros y acceso restringido a las solicitudes recibidas.</p>
 
-        <h2>8. Menores de edad</h2>
+        <h2>9. Menores de edad</h2>
         <p>Los servicios ofrecidos a través de este sitio web están dirigidos a profesionales y empresas. No recogemos conscientemente datos de menores de edad.</p>
 
-        <h2>9. Cambios en esta política</h2>
+        <h2>10. Cambios en esta política</h2>
         <p>Esta Política de Privacidad puede actualizarse para adaptarse a novedades legislativas o cambios en nuestros tratamientos de datos. Te recomendamos revisarla periódicamente.</p>
 
         <div class="legal-nav-links">
@@ -215,6 +238,6 @@
     </div>
   </div>
 
-  <script src="main.js?v=20260821-5" defer></script>
+  <script src="main.js?v=20260824" defer></script>
 </body>
 </html>

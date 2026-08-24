@@ -10,9 +10,12 @@
   <title>Aviso Legal | Hydropower Tecnic</title>
   <link rel="icon" href="assets/img/favicon.png" type="image/png" sizes="any">
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=20260821-3">
+  <!-- Tipografías autoalojadas: al cargar la página no sale ninguna petición a
+       servidores de Google, así que no se cede la IP del visitante a un tercero
+       sin base legal (RGPD). Ver assets/fonts/fonts.css. -->
+  <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/fonts/fonts.css?v=20260824">
+  <link rel="stylesheet" href="styles.css?v=20260824">
 </head>
 <body>
 
@@ -59,7 +62,7 @@
       <div class="container">
         <a href="index.html" class="legal-hero__back">← Volver a la web</a>
         <h1 class="legal-hero__title">Aviso Legal</h1>
-        <p class="legal-hero__updated">Última actualización: 31 de julio de 2026</p>
+        <p class="legal-hero__updated">Última actualización: 24 de agosto de 2026</p>
       </div>
     </section>
 
@@ -67,6 +70,21 @@
       <article class="legal-content">
         <h2>1. Datos identificativos</h2>
         <p>En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio Electrónico (LSSI-CE), se informa de los siguientes datos:</p>
+        <!-- PENDIENTE DE REVISAR CON LA EMPRESA (no se ha modificado nada por no inventar datos):
+
+             1) El CIF que figura abajo tiene 10 caracteres (B + 9 dígitos). Un CIF
+                español válido tiene 9: letra + 7 dígitos + carácter de control.
+                Muy probablemente sobra un dígito. Es un dato obligatorio del
+                art. 10.1.a LSSI-CE y aparece también en el pie de todas las páginas.
+
+             2) La denominación social debería incluir la forma societaria tal y
+                como esté inscrita ("... S.L.", "... S.L.U.", etc.).
+
+             3) El art. 10.1.b LSSI-CE exige los datos de inscripción registral,
+                no solo el nombre del registro: tomo, folio, hoja e inscripción.
+
+             Al corregirlos hay que tocar también el pie de página de las seis
+             páginas HTML y el apartado 1 de politica-privacidad.html. -->
         <ul>
           <li><strong>Denominación social:</strong> Hydropower Repair Solutions</li>
           <li><strong>NIF/CIF:</strong> B198228573</li>
@@ -77,7 +95,12 @@
         </ul>
 
         <h2>2. Objeto y ámbito de aplicación</h2>
-        <p>El presente Aviso Legal regula el uso del sitio web <code>www.hydropowertecnic.es</code> (en adelante, "el sitio web"), del que es titular Hydropower Repair Solutions. La navegación por el sitio web atribuye la condición de usuario e implica la aceptación plena de las condiciones incluidas en este Aviso Legal.</p>
+        <!-- Antes esta línea nombraba www.hydropowertecnic.es, un dominio que a día
+             de hoy no existe (NXDOMAIN). Un aviso legal que regula un sitio distinto
+             del que el visitante está leyendo no identifica nada, así que ahora
+             nombra la dirección real y cubre de antemano cualquier dominio futuro,
+             sin que haya que reescribir el texto el día que se compre el .es. -->
+        <p>El presente Aviso Legal regula el uso del sitio web accesible en <code>https://hydropowertecnicslrovi.vercel.app</code>, así como de cualquier otro dominio desde el que Hydropower Repair Solutions publique este mismo sitio (en adelante, "el sitio web"), del que es titular Hydropower Repair Solutions. La navegación por el sitio web atribuye la condición de usuario e implica la aceptación plena de las condiciones incluidas en este Aviso Legal.</p>
         <p>El sitio web tiene carácter informativo y comercial: presenta los productos y servicios de Hydropower Repair Solutions (equipos hidráulicos y neumáticos, reparación y distribución industrial) y permite solicitar presupuestos, sin que ello constituya en ningún caso una venta o contratación online cerrada a través del propio sitio.</p>
 
         <h2>3. Condiciones de acceso y uso</h2>
@@ -192,6 +215,6 @@
     </div>
   </div>
 
-  <script src="main.js?v=20260821-5" defer></script>
+  <script src="main.js?v=20260824" defer></script>
 </body>
 </html>

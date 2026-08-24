@@ -95,19 +95,20 @@ async function resolvePlaceId(configuredId, apiKey) {
   throw new Error("place_id_not_resolved");
 }
 
-// La foto de perfil se sirve directamente desde el CDN de Google (no se
-// proxea por el lambda: la URL no lleva ningún secreto, es la misma imagen
-// pública que se ve en Maps). Por defensa en profundidad se valida igual
-// que el host sea de Google antes de reenviarla al navegador -- así el CSP
-// del sitio solo necesita confiar en ese dominio, no en cualquier URL que
-// la API decida devolver.
-function isTrustedGooglePhotoUrl(value) {
-  if (typeof value !== "string") return false;
+// La foto de perfil del autor NO se reenvía al navegador a propósito. Pintarla
+// significa cargar una imagen desde googleusercontent.com, es decir, que el
+// navegador de cada visitante conecte con Google y le entregue su IP nada más
+// abrir la página, sin aviso ni consentimiento previo. La web sustituye la foto
+// por las iniciales del autor (ver buildReviewCard en main.js), con lo que el
+// sitio no hace ni una sola petición a terceros al cargar y el CSP puede
+// prescindir de googleusercontent.com en img-src.
+
+function httpsUrlOrNull(value) {
+  if (typeof value !== "string") return null;
   try {
-    var url = new URL(value);
-    return url.protocol === "https:" && /(^|\.)googleusercontent\.com$/i.test(url.hostname);
+    return new URL(value).protocol === "https:" ? value : null;
   } catch (err) {
-    return false;
+    return null;
   }
 }
 
@@ -124,8 +125,7 @@ function normalizeReview(raw) {
 
   return {
     author: name.slice(0, 120),
-    authorUrl: typeof author.uri === "string" && author.uri.indexOf("https://") === 0 ? author.uri : null,
-    photoUrl: isTrustedGooglePhotoUrl(author.photoUri) ? author.photoUri : null,
+    authorUrl: httpsUrlOrNull(author.uri),
     rating: rating,
     text: text.slice(0, TEXT_MAX_CHARS),
     truncated: text.length > TEXT_MAX_CHARS,
@@ -165,7 +165,10 @@ async function loadPlace(placeId, apiKey) {
   return {
     rating: typeof place.rating === "number" ? Math.round(place.rating * 10) / 10 : null,
     total: typeof place.userRatingCount === "number" ? place.userRatingCount : 0,
-    mapsUrl: place.googleMapsUri || null,
+    // El enlace se pinta tal cual en un href del navegador. Aunque venga de la
+    // propia API de Google, se comprueba que sea https: un href que no lo fuera
+    // (javascript:, data:) sería código ejecutable en la página.
+    mapsUrl: httpsUrlOrNull(place.googleMapsUri),
     reviews: sortAndTrim(place.reviews || []),
     updatedAt: new Date().toISOString()
   };
