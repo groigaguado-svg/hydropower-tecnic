@@ -411,12 +411,9 @@ function mapToAirtableFields(lead, scrape, ai) {
     // Prueba del consentimiento (RGPD art. 7.1): qué versión de la política se
     // aceptó y en qué momento. Sin esto, el consentimiento no es demostrable.
     //
-    // OJO: estas tres columnas todavía NO existen en la tabla (comprobado el
-    // 24 de agosto de 2026). El reintento de writeToAirtable las quita del
-    // envío si Airtable las rechaza, así que el lead se sigue guardando, pero
-    // sin la prueba de consentimiento hasta que se creen a mano en Airtable:
-    // "Consentimiento Privacidad" (casilla), "Consentimiento Fecha" (fecha
-    // con hora) y "Politica Version" (texto de una línea).
+    // Las tres columnas ya existen en la tabla (creadas el 24 de agosto de
+    // 2026 vía la Metadata API de Airtable) y el envío de las 16 columnas se
+    // ha probado de extremo a extremo sin necesitar ningún reintento.
     "Consentimiento Privacidad": true,
     "Consentimiento Fecha": lead.consentimientoEn,
     "Politica Version": PRIVACY_POLICY_VERSION
