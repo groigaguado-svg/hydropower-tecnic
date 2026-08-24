@@ -477,10 +477,20 @@
             <!-- Campo trampa contra bots: invisible y fuera del recorrido de
                  teclado y de los lectores de pantalla, así que una persona no
                  llega nunca a él. Los bots que rellenan todos los inputs del
-                 DOM sí lo hacen, y el servidor descarta ese envío. -->
+                 DOM sí lo hacen, y el servidor descarta ese envío.
+
+                 El nombre y el id son deliberadamente sin significado ("hpx7q",
+                 no "apellidos" ni nada parecido a un campo real): Chrome y Edge
+                 autorrellenan campos reconocibles (nombre, apellidos, empresa...)
+                 aunque lleven autocomplete="off" y aunque estén fuera de la
+                 pantalla, si el navegador tiene un perfil guardado que encaja.
+                 Con un campo real de "apellidos" ahí, cualquier visitante con
+                 autorrelleno activado dispara el honeypot sin haber hecho nada
+                 raro, y el envío se descarta en silencio -- 200 al navegador,
+                 pero nunca llega a Airtable. -->
             <div class="form-honeypot" aria-hidden="true">
-              <label for="apellidos">No rellenes este campo</label>
-              <input type="text" id="apellidos" name="apellidos" tabindex="-1" autocomplete="off">
+              <label for="hpx7q">No rellenes este campo</label>
+              <input type="text" id="hpx7q" name="hpx7q" tabindex="-1" autocomplete="off">
             </div>
 
             <div class="form-field" data-field="nombre">
@@ -700,6 +710,6 @@
     </div>
   </div>
 
-  <script src="main.js?v=20260824" defer></script>
+  <script src="main.js?v=20260824-2" defer></script>
 </body>
 </html>

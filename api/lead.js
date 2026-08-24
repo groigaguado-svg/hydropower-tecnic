@@ -215,8 +215,15 @@ function validateInput(body) {
 // rellena. Si viene con contenido, quien envía es un bot rellenando todos los
 // campos del DOM. No se devuelve error -- se responde 200 como si todo hubiera
 // ido bien, para no darle al bot la señal que necesita para ajustarse.
+//
+// El nombre del campo (hpx7q) es deliberadamente sin significado: con un
+// nombre real ("apellidos", "surname"...) el autorrelleno de Chrome/Edge lo
+// reconoce y lo rellena aunque esté fuera de la pantalla y lleve
+// autocomplete="off", y entonces un visitante legítimo con un perfil guardado
+// dispara el honeypot sin haber hecho nada raro -- su envío recibe 200 pero
+// nunca se procesa, así que nunca llega a Airtable.
 function looksLikeBot(body) {
-  return !!String((body && body.apellidos) || "").trim();
+  return !!String((body && body.hpx7q) || "").trim();
 }
 
 async function readBounded(resp, maxBytes) {

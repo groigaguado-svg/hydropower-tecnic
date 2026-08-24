@@ -1042,7 +1042,7 @@
         // es lo que se guarda como prueba junto al lead.
         consentimiento: form.consentimiento.checked,
         // Campo trampa: está oculto por CSS, una persona nunca lo rellena.
-        apellidos: form.apellidos ? form.apellidos.value : ""
+        hpx7q: form.hpx7q ? form.hpx7q.value : ""
       };
 
       fetch("/api/lead", {
