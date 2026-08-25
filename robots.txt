@@ -1,5 +1,9 @@
 User-agent: *
 Allow: /
+# Preferencias de uso de contenido de IA (contentsignals.org): visible en
+# buscadores, pero no lo uses para entrenar modelos ni como fuente de
+# respuesta sin visitar la página real.
+Content-Signal: search=yes, ai-input=yes, ai-train=no
 
 # Los endpoints de servidor no son contenido indexable: /api/lead solo acepta
 # POST del formulario y /api/reviews es la fuente de datos de las reseñas.
