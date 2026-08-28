@@ -6,6 +6,7 @@
 var dns = require("dns");
 var net = require("net");
 var waitUntil = require("@vercel/functions").waitUntil;
+var sendConfirmationEmail = require("../lib/email").sendConfirmationEmail;
 
 var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 var PRESUPUESTO_VALUES = ["", "lt500", "500-2000", "2000-10000", "10000-50000", "gt50000"];
@@ -551,6 +552,13 @@ module.exports = async function handler(req, res) {
 };
 
 async function processLeadInBackground(lead) {
+  // El correo de confirmación al cliente no depende del scraping, el scoring
+  // ni Airtable -- se lanza ya mismo en paralelo para que le llegue cuanto
+  // antes, y un fallo aquí no debe tumbar el resto del pipeline ni viceversa.
+  var emailPromise = sendConfirmationEmail(lead).catch(function (err) {
+    console.error("[api/lead] Confirmation email failed:", err, redactEmail(lead.email));
+  });
+
   var scrape = await scrapeWebsite(lead.web);
 
   var ai = await scoreLead(lead, scrape).catch(function (err) {
@@ -566,6 +574,8 @@ async function processLeadInBackground(lead) {
     // envío falló y poder reclamarlo, no los datos personales de quien escribió.
     console.error("[api/lead] Airtable write failed, lead lost:", err, redactEmail(lead.email));
   }
+
+  await emailPromise;
 }
 
 module.exports.config = { maxDuration: 60 };
