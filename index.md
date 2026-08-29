@@ -41,4 +41,4 @@ CIF: B198228573 · © 2026 Hydropower Repair Solutions. Todos los derechos reser
 
 ---
 
-*Esta es una representación en Markdown de la página de inicio, pensada para agentes de IA. La versión canónica y completa está en [https://hydropowertecnicslrovi.vercel.app/](https://hydropowertecnicslrovi.vercel.app/).*
+*Esta es una representación en Markdown de la página de inicio, pensada para agentes de IA. La versión canónica y completa está en [https://www.hydropowertecnic.com/](https://www.hydropowertecnic.com/).*

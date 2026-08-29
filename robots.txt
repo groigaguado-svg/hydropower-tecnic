@@ -9,4 +9,4 @@ Content-Signal: search=yes, ai-input=yes, ai-train=no
 # POST del formulario y /api/reviews es la fuente de datos de las reseñas.
 Disallow: /api/
 
-Sitemap: https://hydropowertecnicslrovi.vercel.app/sitemap.xml
+Sitemap: https://www.hydropowertecnic.com/sitemap.xml

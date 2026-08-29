@@ -43,4 +43,4 @@ Gestión de inventario, distribución nacional y kits personalizados, con entreg
 
 ---
 
-*Esta es una representación en Markdown de la página de servicios, pensada para agentes de IA. La versión canónica y completa está en [https://hydropowertecnicslrovi.vercel.app/servicios.html](https://hydropowertecnicslrovi.vercel.app/servicios.html).*
+*Esta es una representación en Markdown de la página de servicios, pensada para agentes de IA. La versión canónica y completa está en [https://www.hydropowertecnic.com/servicios.html](https://www.hydropowertecnic.com/servicios.html).*
