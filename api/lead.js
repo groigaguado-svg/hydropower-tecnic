@@ -6,7 +6,9 @@
 var dns = require("dns");
 var net = require("net");
 var waitUntil = require("@vercel/functions").waitUntil;
-var sendConfirmationEmail = require("../lib/email").sendConfirmationEmail;
+var email = require("../lib/email");
+var sendConfirmationEmail = email.sendConfirmationEmail;
+var sendInternalNotification = email.sendInternalNotification;
 
 var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 var PRESUPUESTO_VALUES = ["", "lt500", "500-2000", "2000-10000", "10000-50000", "gt50000"];
@@ -566,6 +568,12 @@ async function processLeadInBackground(lead) {
     return { score: null, priority: null, reasoning: "AI scoring failed", is_b2b: null };
   });
 
+  // El aviso interno lleva ya la prioridad de Gemini, así que espera a tener
+  // "ai" -- pero no bloquea la escritura en Airtable, van en paralelo.
+  var notifyPromise = sendInternalNotification(lead, ai).catch(function (err) {
+    console.error("[api/lead] Internal notification failed:", err, redactEmail(lead.email));
+  });
+
   try {
     var fields = mapToAirtableFields(lead, scrape, ai);
     await writeToAirtable(fields);
@@ -576,6 +584,7 @@ async function processLeadInBackground(lead) {
   }
 
   await emailPromise;
+  await notifyPromise;
 }
 
 module.exports.config = { maxDuration: 60 };
