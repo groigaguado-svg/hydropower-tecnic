@@ -4242,19 +4242,6 @@ a.review-card__author:focus-visible {
     gap: 18px;
   }
 
-  /* --- Dock: el botón de presupuesto destaca en naranja --- */
-  .dock__item--primary {
-    background: linear-gradient(135deg, #ff8a1f, var(--color-secondary));
-    border-color: rgba(255, 255, 255, 0.4);
-    color: var(--color-white);
-    box-shadow: 0 10px 24px -6px rgba(239, 109, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.45);
-  }
-
-  .dock__item--primary:hover,
-  .dock__item--primary:focus-visible {
-    color: var(--color-white);
-  }
-
   /* --- Servicios.html: tarjeta CTA con margen lateral de móvil --- */
   .services-cta > .container {
     width: calc(100% - 2 * var(--size-lg));
