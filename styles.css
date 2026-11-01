@@ -477,10 +477,15 @@ textarea:focus-visible {
   width: 48px;
   height: 48px;
   border-radius: var(--radius-card);
+  -webkit-tap-highlight-color: transparent;
 }
 
-.navbar__toggle:hover {
-  background: var(--color-light);
+/* Solo con ratón: en pantallas táctiles el :hover se queda "pegado" tras
+   tocar y dejaba un recuadro claro encima del botón al cerrar el menú. */
+@media (hover: hover) and (pointer: fine) {
+  .navbar__toggle:hover {
+    background: rgba(148, 163, 184, 0.16);
+  }
 }
 
 .navbar__toggle-bar {
@@ -636,6 +641,7 @@ textarea:focus-visible {
 }
 
 .hero__partner-badge {
+  --logo-h: 26px;
   display: inline-flex;
   align-items: center;
   gap: 14px;
@@ -651,12 +657,17 @@ textarea:focus-visible {
 }
 
 .hero__partner-badge-logo {
-  height: 26px;
+  height: var(--logo-h);
   width: auto;
   flex-shrink: 0;
 }
 
+/* La palabra "SAMOA" ocupa la mitad baja de la imagen (el símbolo sobresale
+   por arriba): su centro queda al 70% de la altura, no al 50%. Se baja el
+   texto ese 20% para que quede alineado con la palabra y no con la caja. */
 .hero__partner-badge-text {
+  position: relative;
+  top: calc(var(--logo-h) * 0.2);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.5px;
@@ -2465,23 +2476,71 @@ textarea:focus-visible {
   white-space: nowrap;
 }
 
+/* Tarjeta flotante sobre fondo claro, en vez de una franja oscura pegada al
+   footer (que con el mismo azul noche se fundía con él y obligaba a una
+   raya de separación). */
 .services-cta {
   text-align: center;
-  padding: var(--size-4xl) 0;
-  background: var(--color-dark);
+  padding: var(--size-3xl) 0 var(--size-4xl);
+  background: var(--color-white);
+}
+
+.services-cta > .container {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  width: min(1040px, calc(100% - 2 * var(--size-xl)));
+  padding: clamp(40px, 6vw, 72px) clamp(24px, 5vw, 64px);
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(520px 260px at 88% -8%, rgba(239, 109, 0, 0.32), transparent 62%),
+    radial-gradient(520px 300px at 4% 115%, rgba(79, 124, 255, 0.35), transparent 62%),
+    linear-gradient(135deg, var(--color-primary) 0%, #142a66 48%, var(--color-dark) 100%);
+  box-shadow:
+    0 30px 60px -24px rgba(15, 23, 42, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
   color: var(--color-white);
+}
+
+/* Retícula técnica muy tenue, como de plano de ingeniería */
+.services-cta > .container::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  pointer-events: none;
 }
 
 .services-cta__title {
   color: var(--color-white);
-  font-size: clamp(24px, 3vw, 32px);
+  font-size: clamp(26px, 3vw, 38px);
   margin-bottom: var(--size-base);
 }
 
 .services-cta__text {
-  max-width: 520px;
+  max-width: 540px;
   margin: 0 auto var(--size-xl);
-  color: rgba(255, 255, 255, 0.7);
+  font-size: clamp(15px, 1.2vw, 17px);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.services-cta .btn--primary {
+  min-height: 54px;
+  padding: 0 34px;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px -8px rgba(239, 109, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+main:has(> .services-cta:last-child) + .footer {
+  border-top: 0;
 }
 
 /* ==========================================================================
@@ -3300,12 +3359,9 @@ a.review-card__author:focus-visible {
   }
 
   .hero__partner-badge {
+    --logo-h: 20px;
     padding: 10px 16px;
     gap: 10px;
-  }
-
-  .hero__partner-badge-logo {
-    height: 20px;
   }
 
   .hero__partner-badge-text {
@@ -3672,4 +3728,553 @@ a.review-card__author:focus-visible {
   width: 1px;
   height: 1px;
   overflow: hidden;
+}
+
+/* ==========================================================================
+   ESCRITORIO — CABECERA A TODO EL ANCHO Y ESCALA TIPOGRÁFICA DE LA PORTADA
+   Escala única: 13px etiquetas · 15–16px texto · 18px entradilla ·
+   22px títulos de tarjeta · ~44px títulos de sección · ~76px titular.
+   ========================================================================== */
+
+@media (min-width: 1041px) {
+  .navbar__inner {
+    max-width: none;
+    padding: 0 clamp(24px, 3vw, 56px);
+  }
+
+  .navbar__logo {
+    height: 38px;
+  }
+
+  .navbar__brand-name {
+    font-size: 16px;
+  }
+
+  .navbar__link {
+    font-size: 15px;
+  }
+
+  .hero__eyebrow {
+    font-size: 13px;
+  }
+
+  .hero__title {
+    font-size: clamp(48px, 4.4vw, 76px);
+  }
+
+  .hero__partner-badge {
+    --logo-h: 30px;
+    padding: 14px 22px;
+    gap: 16px;
+  }
+
+  .hero__partner-badge-text {
+    font-size: 12px;
+  }
+
+  .hero__tags span {
+    font-size: 13px;
+  }
+
+  .hero__cta {
+    min-height: 52px;
+    padding: 0 28px;
+    font-size: 14px;
+  }
+
+  .hero__note {
+    font-size: 16px;
+  }
+
+  .hero__meta-copyright {
+    font-size: 13px;
+  }
+
+  .home .section-eyebrow {
+    font-size: 13px;
+  }
+
+  .home .section-title {
+    font-size: clamp(34px, 2.5vw, 44px);
+  }
+
+  .home .section-subtitle {
+    font-size: 18px;
+  }
+
+  .home .product-card__title {
+    font-size: 22px;
+  }
+
+  .home .product-card__text {
+    font-size: 16px;
+  }
+
+  .home .product-card__count {
+    font-size: 12px;
+  }
+
+  .home .product-card__link {
+    font-size: 15px;
+  }
+
+  .home .spec-card__title {
+    font-size: 17px;
+  }
+
+  .home .spec-card__desc {
+    font-size: 15px;
+  }
+
+  .home .spec-card__value {
+    font-size: 24px;
+  }
+
+  .home .spec-card__value span {
+    font-size: 12px;
+  }
+
+  .home .stats__number {
+    font-size: clamp(36px, 3vw, 48px);
+  }
+
+  .home .reviews-card__text {
+    font-size: 15px;
+  }
+
+  .home .pilar-card__title {
+    font-size: 22px;
+  }
+
+  .home .pilar-card__text {
+    font-size: 16px;
+  }
+
+  .home .form-field label {
+    font-size: 15px;
+  }
+
+  .home .contacto__info-item strong,
+  .home .contacto__info-item a,
+  .home .contacto__info-item span,
+  .home .contacto__hours p {
+    font-size: 15px;
+  }
+}
+
+/* ==========================================================================
+   MÓVIL — PORTADA
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .navbar__inner {
+    padding: 0 var(--size-lg);
+  }
+
+  .navbar__logo {
+    height: 30px;
+  }
+
+  .navbar__nav .navbar__cta .btn {
+    min-height: 54px;
+    border-radius: 12px;
+    box-shadow: 0 12px 28px -8px rgba(239, 109, 0, 0.6);
+  }
+
+  /* --- Hero --- */
+  .home .hero {
+    min-height: 100svh;
+    align-items: center;
+    padding: calc(var(--navbar-height) + 28px) 0 48px;
+  }
+
+  .home .hero__copy {
+    max-width: none;
+  }
+
+  .home .hero__eyebrow {
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .home .hero__title {
+    font-size: clamp(32px, 9.6vw, 42px);
+    line-height: 1;
+    letter-spacing: -0.5px;
+    margin-bottom: 22px;
+  }
+
+  .home .hero__partner-badge {
+    --logo-h: 20px;
+    width: 100%;
+    gap: 14px;
+    margin: 0 0 22px;
+    padding: 12px 16px;
+    border-radius: 12px;
+  }
+
+  .home .hero__partner-badge-text {
+    font-size: 10.5px;
+    letter-spacing: 0.6px;
+    white-space: normal;
+  }
+
+  .home .hero__tags {
+    flex-wrap: nowrap;
+    gap: 0;
+    margin-bottom: 26px;
+  }
+
+  .home .hero__tags span {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10.5px;
+    letter-spacing: 1.2px;
+    white-space: nowrap;
+  }
+
+  .home .hero__tags span:not(:last-child)::after {
+    margin: 0 10px;
+    background: var(--color-secondary);
+  }
+
+  .home .hero__actions {
+    display: flex;
+    width: 100%;
+  }
+
+  .home .hero__cta {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    width: 100%;
+    justify-content: center;
+    min-height: 58px;
+    border: 0;
+    border-radius: 14px;
+    font-size: 14px;
+    letter-spacing: 1.4px;
+    background: linear-gradient(135deg, #ff8a1f 0%, var(--color-secondary) 50%, var(--color-secondary-dark) 100%);
+    box-shadow: 0 14px 32px -10px rgba(239, 109, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    animation: heroCtaPulse 2.8s ease-in-out infinite;
+  }
+
+  .home .hero__cta::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.4) 50%, transparent 70%);
+    transform: translateX(-120%);
+    animation: heroCtaShine 3.6s ease-in-out infinite;
+  }
+
+  .home .hero__cta::after {
+    content: "→";
+    font-size: 18px;
+    letter-spacing: 0;
+    transition: transform var(--transition-fast);
+  }
+
+  .home .hero__cta:active::after {
+    transform: translateX(4px);
+  }
+
+  .home .hero__note {
+    margin-top: 16px;
+    max-width: none;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* El copyright ya está en el pie y aquí quedaba tapado por el dock */
+  .home .hero__meta {
+    display: none;
+  }
+
+  /* --- Marquesinas --- */
+  .marquee--logos {
+    padding: 20px 0;
+  }
+
+  .marquee__logo {
+    padding: 0 18px;
+  }
+
+  .marquee__logo img {
+    height: 30px;
+  }
+
+  .marquee--static {
+    padding: 14px var(--size-lg);
+  }
+
+  .marquee--static .marquee__track {
+    gap: 6px 10px;
+  }
+
+  .marquee--static .marquee__item,
+  .marquee--static .marquee__dot {
+    font-size: 11.5px;
+  }
+
+  /* --- Ritmo vertical y cabeceras de sección --- */
+  .home .categorias,
+  .home .specs,
+  .home .pilares,
+  .home .contacto,
+  .home .ubicacion {
+    padding: 56px 0;
+  }
+
+  .home .testimonios {
+    padding-top: 56px;
+    padding-bottom: 56px;
+  }
+
+  .home .section-header {
+    margin-bottom: 28px;
+  }
+
+  .home .section-eyebrow {
+    font-size: 11px;
+    letter-spacing: 1.8px;
+    margin-bottom: 8px;
+  }
+
+  .home .section-title {
+    font-size: 26px;
+    line-height: 1.18;
+    letter-spacing: -0.4px;
+    margin-bottom: 10px;
+  }
+
+  .home .section-subtitle {
+    font-size: 15px;
+    line-height: 1.55;
+    margin-bottom: 0;
+  }
+
+  /* --- Servicios --- */
+  .home .categorias__grid {
+    gap: 18px;
+  }
+
+  .home .product-card {
+    padding: 12px 12px 16px;
+    border-radius: 18px;
+    box-shadow: 0 6px 20px -12px rgba(15, 23, 42, 0.25);
+  }
+
+  .home .product-card__image {
+    height: auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+
+  .home .product-card__head,
+  .home .product-card__text,
+  .home .product-card__link {
+    margin-left: 6px;
+    margin-right: 6px;
+  }
+
+  .home .product-card__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .home .product-card__title {
+    font-size: 19px;
+  }
+
+  .home .product-card__count {
+    font-size: 10.5px;
+  }
+
+  .home .product-card__text {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+
+  .home .product-card__link {
+    min-height: 40px;
+  }
+
+  /* --- Capacidades: rejilla de 2 columnas en vez de 6 tarjetas apiladas --- */
+  .home .specs__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    max-width: none;
+  }
+
+  .home .spec-card {
+    padding: 18px 12px;
+    border-radius: 14px;
+  }
+
+  .home .spec-card__icon {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 12px;
+  }
+
+  .home .spec-card__icon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .home .spec-card__title {
+    font-size: 13.5px;
+    margin-bottom: 6px;
+  }
+
+  .home .spec-card__desc {
+    font-size: 12.5px;
+    line-height: 1.5;
+  }
+
+  .home .spec-card__value {
+    font-size: 16px;
+  }
+
+  .home .spec-card__value span {
+    font-size: 10px;
+    margin-left: 2px;
+  }
+
+  /* --- Cifras: las tres en una fila --- */
+  .home .stats {
+    padding: 28px 0;
+  }
+
+  .home .stats__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+  }
+
+  .home .stats__item,
+  .home .stats__item:last-child {
+    padding: 4px 6px;
+    border-bottom: none;
+  }
+
+  .home .stats__item {
+    border-right: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .home .stats__item:last-child {
+    border-right: none;
+  }
+
+  .home .stats__number {
+    font-size: 26px;
+  }
+
+  .home .stats__label {
+    font-size: 9.5px;
+    letter-spacing: 0.6px;
+    line-height: 1.35;
+  }
+
+  /* --- Empresa --- */
+  .home .pilares__grid {
+    gap: 14px;
+  }
+
+  .home .pilar-card {
+    min-height: 0;
+    padding: 22px 20px 26px;
+    border-radius: 16px;
+  }
+
+  .home .pilar-card__icon {
+    width: 34px;
+    height: 34px;
+    margin-bottom: 14px;
+  }
+
+  .home .pilar-card__title {
+    font-size: 18px;
+  }
+
+  .home .pilar-card__text {
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .home .pilar-card__number {
+    font-size: 56px;
+  }
+
+  /* --- Contacto --- */
+  .home .contacto__grid {
+    gap: 20px;
+  }
+
+  .home .contacto__form {
+    padding: 22px 18px;
+    border-radius: 18px;
+    gap: 16px;
+  }
+
+  .home .form-field label {
+    font-size: 13.5px;
+  }
+
+  /* 16px evita que iOS haga zoom al tocar un campo */
+  .home .form-field input,
+  .home .form-field select,
+  .home .form-field textarea {
+    font-size: 16px;
+  }
+
+  .home .contacto__info {
+    padding: 24px 20px;
+    border-radius: 18px;
+    gap: 18px;
+  }
+
+  /* --- Dock: el botón de presupuesto destaca en naranja --- */
+  .dock__item--primary {
+    background: linear-gradient(135deg, #ff8a1f, var(--color-secondary));
+    border-color: rgba(255, 255, 255, 0.4);
+    color: var(--color-white);
+    box-shadow: 0 10px 24px -6px rgba(239, 109, 0, 0.65), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+  }
+
+  .dock__item--primary:hover,
+  .dock__item--primary:focus-visible {
+    color: var(--color-white);
+  }
+
+  /* --- Servicios.html: tarjeta CTA con margen lateral de móvil --- */
+  .services-cta > .container {
+    width: calc(100% - 2 * var(--size-lg));
+    border-radius: 22px;
+  }
+}
+
+@keyframes heroCtaPulse {
+  0%, 100% { box-shadow: 0 14px 32px -10px rgba(239, 109, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 0 0 rgba(239, 109, 0, 0.45); }
+  50% { box-shadow: 0 14px 32px -10px rgba(239, 109, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 0 0 9px rgba(239, 109, 0, 0); }
+}
+
+@keyframes heroCtaShine {
+  0%, 55% { transform: translateX(-120%); }
+  85%, 100% { transform: translateX(120%); }
+}
+
+@media (max-width: 640px) and (prefers-reduced-motion: reduce) {
+  .home .hero__cta,
+  .home .hero__cta::before {
+    animation: none;
+  }
 }
